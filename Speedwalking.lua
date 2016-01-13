@@ -18,13 +18,45 @@ speedwalkingFrame.formatTimeNoMS = function(time)
   return time;
 end
 
+speedwalkingFrame.formatTimeMS = function(time)
+  if (time < 10) then
+    time = string.format("0%.3f", time);
+  else
+    time = string.format("%.3f", time);
+  end
+  return time;
+end
+speedwalkingFrame.finalParse = function()
+  local steps = speedwalkingFrame.currentTW["steps"];
+  local name, curValue, finalValue;
+  local string = "";
+  for i = 1, steps do
+    if (speedwalkingFrame.currentTW["curValues"][i] ~= speedwalkingFrame.currentTW["finalValues"][i]) then
+      speedwalkingFrame.currentTW["curValues"][i] = speedwalkingFrame.currentTW["finalValues"][i];
+      speedwalkingFrame.currentTW["objectiveTimes"][i] = string.format("|c%s%s|r", speedwalkingFrame.successColor, speedwalkingFrame.currentTW["time"]);
+    end
+    name = speedwalkingFrame.currentTW["bosses"][i];
+    curValue = speedwalkingFrame.currentTW["curValues"][i];
+    finalValue = speedwalkingFrame.currentTW["finalValues"][i];
+    if (speedwalkingFrame.currentTW["objectiveTimes"][i]) then
+      string = string .. string.format("%s - %d/%d - %s\n",  name, curValue, finalValue, speedwalkingFrame.currentTW["objectiveTimes"][i]);
+    else
+      string = string .. string.format("%s - %d/%d\n", name, curValue, finalValue);
+    end
+  end
+  speedwalkingFrame.currentTW["string"] = string;
+end
+
 speedwalkingFrame.speedwalkingTimerText = function(currentZoneID)
   local string = "";
-  if speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID] then
+  if speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID] and speedwalkingFrame.currentTW then
     local goldTimer = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["goldTimer"];
+    local goldMin, goldSec = speedwalkingFrame.secondsToTime(goldTimer);
+    if (speedwalkingFrame.currentTW["finalParse"] == true) then
+      return speedwalkingFrame.currentTW["time"] .. " / " .. goldMin .. ":" .. speedwalkingFrame.formatTimeNoMS(goldSec);
+    end
     local startTime = speedwalkingFrame.currentTW["startTime"];
     local startMin, startSec;
-    local goldMin, goldSec = speedwalkingFrame.secondsToTime(goldTimer);
     -- Format Seconds
     goldSec = speedwalkingFrame.formatTimeNoMS(goldSec);
     -- Create String
@@ -32,29 +64,60 @@ speedwalkingFrame.speedwalkingTimerText = function(currentZoneID)
       local currentTime = GetTime();
       local secs = currentTime - startTime;
       startMin, startSec = speedwalkingFrame.secondsToTime(secs);
-      startMin = speedwalkingFrame.formatTimeNoMS(startMin);
-      startSec = speedwalkingFrame.formatTimeNoMS(startSec);
+      if (speedwalkingFrame.trueTimer == true) then
+        startMin = speedwalkingFrame.formatTimeNoMS(startMin);
+        startSec = speedwalkingFrame.formatTimeMS(startSec);
+      else
+        startMin = speedwalkingFrame.formatTimeNoMS(startMin);
+        startSec = speedwalkingFrame.formatTimeNoMS(startSec);
+      end
     else
       startMin = "00";
       startSec = "00";
     end
     string = startMin .. ":" .. startSec;
+    speedwalkingFrame.currentTW["time"] = string;
     string = string .. " / ";
     string = string .. goldMin .. ":" .. goldSec;
   end
   return string;
 end
 
-speedwalkingFrame.speedwalkingObjectiveText = function(currentZoneID)
+speedwalkingFrame.speedwalkingObjectiveText = function()
   local string = "";
-  if speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID] then
-    local bosses = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["bosses"];
-    local enemies = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["enemies"];
-    for k, v in pairs(bosses) do
-      string = string .. k .. " - " .. speedwalkingFrame.currentTW["bosses"][k] .."/1\n";
+  local name, status, curValue, finalValue, complete;
+  if speedwalkingFrame.currentTW then
+    local bosses = speedwalkingFrame.currentTW["bosses"];
+    -- local enemies = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["enemies"];
+    local steps = speedwalkingFrame.currentTW["steps"];
+    for i = 1, steps do
+      name, _, status, curValue, finalValue = C_Scenario.GetCriteriaInfo(i);
+      if (finalValue == 0 or not finalValue) then
+        -- Timewalker Complete
+        if (speedwalkingFrame.currentTW["finalParse"] == false) then
+          -- Add Last Time
+          speedwalkingFrame.finalParse();
+          speedwalkingFrame.currentTW["finalParse"] = true;
+        end
+        return speedwalkingFrame.currentTW["string"];
+      end
+      if (curValue ~= speedwalkingFrame.currentTW["curValues"][i]) then
+        if (curValue == finalValue) then
+          -- Objective Time!!!
+          speedwalkingFrame.currentTW["objectiveTimes"][i] = string.format("|c%s%s|r", speedwalkingFrame.successColor, speedwalkingFrame.currentTW["time"]);
+        end
+      end
+      name = speedwalkingFrame.currentTW["bosses"][i];
+      speedwalkingFrame.currentTW["curValues"][i] = curValue;
+      if (speedwalkingFrame.currentTW["objectiveTimes"][i]) then
+        string = string .. string.format("%s - %d/%d - %s\n",  name, curValue, finalValue, speedwalkingFrame.currentTW["objectiveTimes"][i]);
+      else
+        string = string .. string.format("%s - %d/%d\n", name, curValue, finalValue);
+      end
     end
-    string = string .. "Enemies - " .. speedwalkingFrame.currentTW["enemies"] .. "/" .. enemies .. "\n";
+    -- string = string .. "Enemies - " .. speedwalkingFrame.currentTW["enemies"] .. "/" .. enemies .. "\n";
   end
+  speedwalkingFrame.currentTW["string"] = string;
   return string;
 end
 
@@ -70,19 +133,40 @@ speedwalkingFrame.hideFrames = function()
   speedwalkingObjectiveFrame:Hide();
 end
 
+speedwalkingFrame.fillTables = function(steps)
+  for i = 1, steps do
+    local name, _, status, curValue, finalValue = C_Scenario.GetCriteriaInfo(i);
+    name = string.gsub(name, " defeated", "");
+    speedwalkingFrame.currentTW["curValues"][i] = curValue;
+    speedwalkingFrame.currentTW["finalValues"][i] = finalValue;
+    speedwalkingFrame.currentTW["bosses"][i] = name;
+  end
+end
+
+speedwalkingFrame.wipeTables = function()
+  if (speedwalkingFrame.currentTW) then
+    speedwalkingFrame.currentTW = table.wipe(speedwalkingFrame.currentTW);
+  end
+end
+
 speedwalkingFrame.setupTW = function(currentZoneID)
-  local bosses = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["bosses"];
-  local enemies = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["enemies"];
+  -- local enemies = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["enemies"];
+  local _, _, steps = C_Scenario.GetStepInfo();
   speedwalkingFrame.currentTW = nil;
   speedwalkingFrame.currentTW = {};
   speedwalkingFrame.currentTW["zoneID"] = currentZoneID;
   speedwalkingFrame.currentTW["startTime"] = nil;
   speedwalkingFrame.currentTW["endTime"] = nil;
+  speedwalkingFrame.currentTW["steps"] = steps;
   speedwalkingFrame.currentTW["bosses"] = {};
-  for k, v in pairs(bosses) do
-    speedwalkingFrame.currentTW["bosses"][k] = 0;
-  end
-  speedwalkingFrame.currentTW["enemies"] = 0;
+  speedwalkingFrame.currentTW["curValues"] = {};
+  speedwalkingFrame.currentTW["finalValues"] = {};
+  speedwalkingFrame.currentTW["objectiveTimes"] = {};
+  speedwalkingFrame.currentTW["string"] = nil;
+  speedwalkingFrame.currentTW["time"] = nil;
+  speedwalkingFrame.currentTW["finalParse"] = false;
+  -- speedwalkingFrame.currentTW["enemies"] = 0;
+  speedwalkingFrame.fillTables(steps);
 end
 
 speedwalkingFrame.checkPositions = function(currentZoneID)
@@ -114,7 +198,7 @@ speedwalkingFrame.updateInfo = function()
     local timerText = speedwalkingFrame.speedwalkingTimerText(currentZoneID);
     speedwalkingTimerFrame.font:SetText(timerText);
     -- Objective Text
-    local objectiveText = speedwalkingFrame.speedwalkingObjectiveText(currentZoneID);
+    local objectiveText = speedwalkingFrame.speedwalkingObjectiveText();
     speedwalkingObjectiveFrame.font:SetText(objectiveText);
   end
 end
@@ -134,6 +218,7 @@ local function eventHandler(self, event, ...)
       else
         speedwalkingFrame.inTW = false;
         speedwalkingFrame.hideFrames();
+        speedwalkingFrame.wipeTables();
       end
     end
   end
@@ -143,6 +228,8 @@ end
 
 -- Global Variables (Most likely saved later)
 speedwalkingFrame.inTW = false;
+speedwalkingFrame.successColor = "000ff000";
+speedwalkingFrame.trueTimer = true;
 speedwalkingDungeonInfo = {};
 speedwalkingDungeonInfo[670] = {};
 speedwalkingDungeonInfo[670]["name"] = "Grim Batol";
@@ -177,39 +264,39 @@ speedwalkingFrame:RegisterEvent("ADDON_LOADED");
 speedwalkingFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 
 -- Set Frame Height/Width
-speedwalkingFrame:SetHeight(300);
-speedwalkingFrame:SetWidth(300);
-speedwalkingFrame:SetPoint("CENTER", 0, 0);
-speedwalkingTimerFrame:SetHeight(100);
-speedwalkingTimerFrame:SetWidth(300);
+speedwalkingFrame:SetHeight(240);
+speedwalkingFrame:SetWidth(400);
+speedwalkingFrame:SetPoint("RIGHT", 0, 0);
+speedwalkingTimerFrame:SetHeight(40);
+speedwalkingTimerFrame:SetWidth(400);
 speedwalkingTimerFrame:SetPoint("TOP", 0, 0);
 speedwalkingObjectiveFrame:SetHeight(200);
-speedwalkingObjectiveFrame:SetWidth(300);
-speedwalkingObjectiveFrame:SetPoint("TOP", 0, -100);
+speedwalkingObjectiveFrame:SetWidth(400);
+speedwalkingObjectiveFrame:SetPoint("TOP", 0, -40);
 
 -- Set Font Settings
 speedwalkingTimerFrame.font:SetAllPoints(true);
 speedwalkingTimerFrame.font:SetJustifyH("LEFT");
-speedwalkingTimerFrame.font:SetJustifyV("TOP");
-speedwalkingTimerFrame.font:SetFont("Fonts\\FRIZQT__.TTF", 24);
-speedwalkingTimerFrame.font:SetTextColor(0, 0, 0, 1);
+speedwalkingTimerFrame.font:SetJustifyV("BOTTOM");
+speedwalkingTimerFrame.font:SetFont("Interface\\Addons\\Speedwalking\\MyriadCondensedWeb.ttf", 29, "OUTLINE");
+speedwalkingTimerFrame.font:SetTextColor(1, 1, 1, 1);
 
 speedwalkingObjectiveFrame.font:SetAllPoints(true);
 speedwalkingObjectiveFrame.font:SetJustifyH("LEFT");
 speedwalkingObjectiveFrame.font:SetJustifyV("TOP");
-speedwalkingObjectiveFrame.font:SetFont("Fonts\\FRIZQT__.TTF", 18);
-speedwalkingObjectiveFrame.font:SetTextColor(0, 0, 0, 1);
+speedwalkingObjectiveFrame.font:SetFont("Interface\\Addons\\Speedwalking\\MyriadCondensedWeb.ttf", 21, "OUTLINE");
+speedwalkingObjectiveFrame.font:SetTextColor(1, 1, 1, 1);
 
 -- frame:SetHeight(pbMainHeight);
 -- frame:SetWidth(pbMainWidth);
 
 -- Give Frame Background
 speedwalkingFrame.texture:SetAllPoints(speedwalkingFrame);
-speedwalkingFrame.texture:SetTexture(0.5, 0.5, 0.5, 0.5);
+speedwalkingFrame.texture:SetTexture(0.5, 0.5, 0.5, 0);
 speedwalkingTimerFrame.texture:SetAllPoints(speedwalkingTimerFrame);
-speedwalkingTimerFrame.texture:SetTexture(1, 0, 0, 0.6);
+speedwalkingTimerFrame.texture:SetTexture(1, 0, 0, 0);
 speedwalkingObjectiveFrame.texture:SetAllPoints(speedwalkingObjectiveFrame);
-speedwalkingObjectiveFrame.texture:SetTexture(0, 1, 0, 0.6);
+speedwalkingObjectiveFrame.texture:SetTexture(0, 1, 0, 0);
 --frame.texture:SetAllPoints(frame)
 --frame.texture:SetTexture(0.5, 0.5, 0.5, 0.5);
 
