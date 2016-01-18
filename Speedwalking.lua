@@ -165,6 +165,7 @@ speedwalkingFrame.setupTW = function(currentZoneID)
   speedwalkingFrame.currentTW["string"] = nil;
   speedwalkingFrame.currentTW["time"] = nil;
   speedwalkingFrame.currentTW["finalParse"] = false;
+  speedwalkingFrame.currentTW["lateStart"] = false;
   -- speedwalkingFrame.currentTW["enemies"] = 0;
   speedwalkingFrame.fillTables(steps);
 end
@@ -238,9 +239,9 @@ local function eventHandler(self, event, ...)
       if (speedwalkingDungeonInfo[currentZoneID]) then
         speedwalkingFrame.wipeTables();
         speedwalkingFrame.setupTW(currentZoneID);
-        local inProgress = speedwalkingFrame.inProgressScan(currentZoneID);
+        speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.inProgressScan(currentZoneID);
         print("Welcome To " .. speedwalkingDungeonInfo[currentZoneID]["name"]);
-        print(inProgress);
+        print(speedwalkingFrame.currentTW["lateStart"]);
         speedwalkingFrame.showFrames();
         speedwalkingFrame.inTW = true;
         speedwalkingFrame.updateInfo();
@@ -262,11 +263,6 @@ speedwalkingDungeonInfo = {};
 speedwalkingDungeonInfo[670] = {};
 speedwalkingDungeonInfo[670]["name"] = "Grim Batol";
 -- Key Is Unit Name In Game, Value Is Display Name
-speedwalkingDungeonInfo[670]["bosses"] = {};
-speedwalkingDungeonInfo[670]["bosses"]["General Umbriss"] = "General Umbriss";
-speedwalkingDungeonInfo[670]["bosses"]["Forgemaster Throngus"] = "Forgemaster Throngus";
-speedwalkingDungeonInfo[670]["bosses"]["Drahga Shadowburner"] = "Drahga Shadowburner";
-speedwalkingDungeonInfo[670]["bosses"]["Erudax, the Duke of Below"] = "Erudax, the Duke of Below";
 speedwalkingDungeonInfo[670]["enemies"] = 69;
 -- Timer Is Stored In Seconds
 speedwalkingDungeonInfo[670]["goldTimer"] = 1200;
