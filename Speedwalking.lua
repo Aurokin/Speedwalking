@@ -236,12 +236,13 @@ end
 
 local function eventHandler(self, event, ...)
   if event == "ADDON_LOADED" and ... == "Speedwalking" then
-    if not speedwalkingX or not speedwalkingY then
-      speedwalkingX = 0;
-      speedwalkingY = 0;
+    if not speedwalkingVars then
+      speedwalkingVars={};
+      speedwalkingVars["anchor"]="RIGHT";
+      speedwalkingVars["xOffset"]=0;
+      speedwalkingVars["yOffset"]=0;
     end
-    speedwalkingFrame:SetPoint("RIGHT", speedwalkingX, speedwalkingY);
-    print(speedwalkingX .. " " .. speedwalkingY);
+    speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
   elseif event == "PLAYER_ENTERING_WORLD" then
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
@@ -322,8 +323,9 @@ speedwalkingFrame:SetScript("OnMouseUp", function(self, button)
    self:StopMovingOrSizing();
    self.isMoving = false;
    point, relativeTo, relativePoint, xOffset, yOffset = speedwalkingFrame:GetPoint(index);
-   speedwalkingX = xOffset;
-   speedwalkingY = yOffset;
+   speedwalkingVars["anchor"]=point;
+   speedwalkingVars["xOffset"] = xOffset;
+   speedwalkingVars["yOffset"] = yOffset;
   end
 end);
 speedwalkingFrame:SetScript("OnHide", function(self)
@@ -380,8 +382,9 @@ local function handler(msg, editbox)
     speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
     print(string);
   elseif (msg == "reset") then
-    speedwalkingX = 0;
-    speedwalkingY = 0;
+    speedwalkingVars["anchor"]="RIGHT";
+    speedwalkingVars["xOffset"] = 0;
+    speedwalkingVars["yOffset"] = 0;
     speedwalkingFrame:SetPoint("RIGHT", 0, 0);
     print("Speedwalking - Frame Position Reset");
   else
@@ -391,9 +394,3 @@ local function handler(msg, editbox)
   end
 end
 SlashCmdList["SPEEDWALKING"] = handler;
-
--- Show Main Container Frame
-print("Hello World");
---frame:SetPoint("CENTER", 0, 0);
---frame:Show();
-print("Hello World2");
