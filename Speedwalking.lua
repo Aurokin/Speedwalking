@@ -223,7 +223,7 @@ speedwalkingFrame.updateInfo = function()
     end
     -- Timer Text
     local timerText = speedwalkingFrame.speedwalkingTimerText(currentZoneID);
-    speedwalkingTimerFrame.font:SetText(timerText);
+    speedwalkingTimerFrame.font:SetText("|cffff0000"..timerText.."|r");
     -- Objective Text
     local objectiveText = speedwalkingFrame.speedwalkingObjectiveText();
     speedwalkingObjectiveFrame.font:SetText(objectiveText);
