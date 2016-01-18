@@ -242,6 +242,7 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["xOffset"] = 0;
       speedwalkingVars["yOffset"] = 0;
     end
+    speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
@@ -303,7 +304,7 @@ speedwalkingFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
 speedwalkingFrame:SetWidth(400);
--- speedwalkingFrame:SetPoint("RIGHT", 0, 0);
+speedwalkingFrame:SetPoint("RIGHT", 0, 0);
 speedwalkingTimerFrame:SetHeight(40);
 speedwalkingTimerFrame:SetWidth(400);
 speedwalkingTimerFrame:SetPoint("TOP", 0, 0);
@@ -386,6 +387,7 @@ local function handler(msg, editbox)
     speedwalkingVars["anchor"] = "RIGHT";
     speedwalkingVars["xOffset"] = 0;
     speedwalkingVars["yOffset"] = 0;
+    speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint("RIGHT", 0, 0);
     print("Speedwalking - Frame Position Reset");
   else
