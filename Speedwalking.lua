@@ -223,7 +223,11 @@ speedwalkingFrame.updateInfo = function()
     end
     -- Timer Text
     local timerText = speedwalkingFrame.speedwalkingTimerText(currentZoneID);
-    speedwalkingTimerFrame.font:SetText("|cffff0000"..timerText.."|r");
+    if speedwalkingFrame.currentTW["lateStart"] then
+      speedwalkingTimerFrame.font:SetText("|cffff0000"..timerText.."|r");
+    else
+      speedwalkingTimerFrame.font:SetText(timerText);
+    end
     -- Objective Text
     local objectiveText = speedwalkingFrame.speedwalkingObjectiveText();
     speedwalkingObjectiveFrame.font:SetText(objectiveText);
