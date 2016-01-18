@@ -3,6 +3,17 @@ speedwalkingFrame = CreateFrame("Frame", "SpeedwalkingFrame", UIParent);
 speedwalkingTimerFrame = CreateFrame("Frame", "SpeedwalkingTimerFrame", speedwalkingFrame);
 speedwalkingObjectiveFrame = CreateFrame("Frame", "speedwalkingObjectiveFrame", speedwalkingFrame);
 
+if speedwalkingSavedVariables == nil then
+  print("Initializing")
+  speedwalkingSavedVariables={}
+  speedwalkingSavedVariables["xoffset"]=0;
+  speedwalkingSavedVariables["yoffset"]=0;
+else
+  print("prev x: "..speedwalkingSavedVariables["xoffset"])
+  print("prev y: "..speedwalkingSavedVariables["yoffset"])
+end
+
+
 speedwalkingFrame.secondsToTime = function(seconds)
   local min = math.floor(seconds/60);
   local sec = seconds - (min * 60);
@@ -295,7 +306,7 @@ speedwalkingFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
 speedwalkingFrame:SetWidth(400);
-speedwalkingFrame:SetPoint("RIGHT", 0, 0);
+speedwalkingFrame:SetPoint("RIGHT", speedwalkingSavedVariables["xoffset"], speedwalkingSavedVariables["yoffset"]);
 speedwalkingTimerFrame:SetHeight(40);
 speedwalkingTimerFrame:SetWidth(400);
 speedwalkingTimerFrame:SetPoint("TOP", 0, 0);
@@ -315,6 +326,9 @@ speedwalkingFrame:SetScript("OnMouseUp", function(self, button)
   if button == "LeftButton" and self.isMoving then
    self:StopMovingOrSizing();
    self.isMoving = false;
+   point, relativeTo, relativePoint, xOffset, yOffset = speedwalkingFrame:GetPoint(index);
+   speedwalkingSavedVariables["xoffset"]=xOffset;
+   speedwalkingSavedVariables["yoffset"]=yOffset;   
   end
 end);
 speedwalkingFrame:SetScript("OnHide", function(self)
