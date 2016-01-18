@@ -179,7 +179,9 @@ speedwalkingFrame.checkPositions = function(currentZoneID)
   if isAnyoneOutside then
     --time to start timer
     speedwalkingFrame.currentTW["startTime"] = GetTime();
+    return true;
   end
+  return false;
 end
 
 speedwalkingFrame.checkUnitPosition = function(currentZoneID,unitName)
@@ -188,7 +190,7 @@ speedwalkingFrame.checkUnitPosition = function(currentZoneID,unitName)
   local startX = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["x"];
   local startY = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["y"];
   local safeZone = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["safeZone"];
-  
+
   dx = startX - posX;
   dy = startY - posY;
   distance = math.sqrt((dx * dx) + (dy * dy));
@@ -196,11 +198,26 @@ speedwalkingFrame.checkUnitPosition = function(currentZoneID,unitName)
   return currentZoneID==terrainMapID and distance > safeZone;
 end
 
+speedwalkingFrame.inProgressScan = function(currentZoneID)
+  if (speedwalkingFrame.currentTW) then
+    -- If objective is anything but unmodified then it is
+    local curValues = speedwalkingFrame.currentTW["curValues"];
+    local steps = speedwalkingFrame.currentTW["steps"];
+    for i = 1, steps do
+      if curValues[i] ~= 0 then
+        return true;
+      end
+    end
+    -- Check Positions
+    return speedwalkingFrame.checkPositions(currentZoneID);
+  end
+end
+
 speedwalkingFrame.updateInfo = function()
-  if (speedwalkingFrame.inTW == true) then
+  if (speedwalkingFrame.currentTW) then
     local startTime = speedwalkingFrame.currentTW["startTime"];
     local currentZoneID = speedwalkingFrame.currentTW["zoneID"];
-    if (not startTime) then
+    if (not startTime and speedwalkingFrame.inTW == true) then
       speedwalkingFrame.checkPositions(currentZoneID);
     end
     -- Timer Text
@@ -220,7 +237,9 @@ local function eventHandler(self, event, ...)
     if (speedwalkingDungeonInfo and currentZoneID) then
       if (speedwalkingDungeonInfo[currentZoneID]) then
         speedwalkingFrame.setupTW(currentZoneID);
+        local inProgress = speedwalkingFrame.inProgressScan(currentZoneID);
         print("Welcome To " .. speedwalkingDungeonInfo[currentZoneID]["name"]);
+        print(inProgress);
         speedwalkingFrame.showFrames();
         speedwalkingFrame.inTW = true;
         speedwalkingFrame.updateInfo();
