@@ -164,6 +164,7 @@ speedwalkingFrame.setupTW = function(currentZoneID)
   speedwalkingFrame.currentTW["objectiveTimes"] = {};
   speedwalkingFrame.currentTW["string"] = nil;
   speedwalkingFrame.currentTW["time"] = nil;
+  speedwalkingFrame.currentTW["firstUpdate"] = false;
   speedwalkingFrame.currentTW["finalParse"] = false;
   speedwalkingFrame.currentTW["lateStart"] = false;
   -- speedwalkingFrame.currentTW["enemies"] = 0;
@@ -255,8 +256,8 @@ local function eventHandler(self, event, ...)
         speedwalkingFrame.wipeTables();
         speedwalkingFrame.setupTW(currentZoneID);
         speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.inProgressScan(currentZoneID);
-        print("Welcome To " .. speedwalkingDungeonInfo[currentZoneID]["name"]);
-        print(speedwalkingFrame.currentTW["lateStart"]);
+        -- Late Starts Don't Need An Update
+        speedwalkingFrame.currentTW["firstUpdate"] = speedwalkingFrame.currentTW["lateStart"];
         speedwalkingFrame.showFrames();
         speedwalkingFrame.inTW = true;
         speedwalkingFrame.updateInfo();
@@ -265,6 +266,11 @@ local function eventHandler(self, event, ...)
         speedwalkingFrame.hideFrames();
       end
     end
+  elseif event == "SCENARIO_POI_UPDATE" and speedwalkingFrame.inTW == true and speedwalkingFrame.currentTW and speedwalkingFrame.currentTW["firstUpdate"] == false then
+    local _, _, steps = C_Scenario.GetStepInfo();
+    speedwalkingFrame.currentTW["steps"] = steps;
+    speedwalkingFrame.fillTables(steps);
+    speedwalkingFrame.currentTW["firstUpdate"] = true;
   end
 end
 
@@ -345,6 +351,7 @@ speedwalkingObjectiveFrame.font = speedwalkingObjectiveFrame:CreateFontString(ni
 -- Register Events
 speedwalkingFrame:RegisterEvent("ADDON_LOADED");
 speedwalkingFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
+speedwalkingFrame:RegisterEvent("SCENARIO_POI_UPDATE");
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
