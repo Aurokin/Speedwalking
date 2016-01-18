@@ -332,6 +332,18 @@ speedwalkingObjectiveFrame.texture:SetTexture(0, 1, 0, 0);
 speedwalkingFrame:SetScript("OnEvent", eventHandler);
 speedwalkingFrame:SetScript("OnUpdate", speedwalkingFrame.updateInfo);
 
+-- Slash Command Setup
+SLASH_SPEEDWALKING1, SLASH_SPEEDWALKING2 = '/speedwalking', '/sw';
+local function handler(msg, editbox)
+  if (msg == 'lock') then
+    -- Variable Toggle Goes Here
+  else
+    print("Speedwalking - For Your Go Fast Timewalking Needs");
+    print("Toggle Lock -  /sw lock");
+  end
+end
+SlashCmdList["SPEEDWALKING"] = handler;
+
 -- Show Main Container Frame
 print("Hello World");
 --frame:SetPoint("CENTER", 0, 0);
