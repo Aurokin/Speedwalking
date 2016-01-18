@@ -236,6 +236,7 @@ local function eventHandler(self, event, ...)
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
     if (speedwalkingDungeonInfo and currentZoneID) then
       if (speedwalkingDungeonInfo[currentZoneID]) then
+        speedwalkingFrame.wipeTables();
         speedwalkingFrame.setupTW(currentZoneID);
         local inProgress = speedwalkingFrame.inProgressScan(currentZoneID);
         print("Welcome To " .. speedwalkingDungeonInfo[currentZoneID]["name"]);
@@ -246,7 +247,6 @@ local function eventHandler(self, event, ...)
       else
         speedwalkingFrame.inTW = false;
         speedwalkingFrame.hideFrames();
-        speedwalkingFrame.wipeTables();
       end
     end
   end
