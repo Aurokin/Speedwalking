@@ -1,6 +1,5 @@
 ## Interface: 60200
 ## Title: Speedwalking
 ## Notes: CM Style Timer For Timewalking
-
-##SavedVariables speedwalkingSavedVariables
+## SavedVariables: speedwalkingX, speedwalkingY
 Speedwalking.lua

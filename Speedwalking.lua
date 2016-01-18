@@ -3,17 +3,6 @@ speedwalkingFrame = CreateFrame("Frame", "SpeedwalkingFrame", UIParent);
 speedwalkingTimerFrame = CreateFrame("Frame", "SpeedwalkingTimerFrame", speedwalkingFrame);
 speedwalkingObjectiveFrame = CreateFrame("Frame", "speedwalkingObjectiveFrame", speedwalkingFrame);
 
-if speedwalkingSavedVariables == nil then
-  print("Initializing")
-  speedwalkingSavedVariables={}
-  speedwalkingSavedVariables["xoffset"]=0;
-  speedwalkingSavedVariables["yoffset"]=0;
-else
-  print("prev x: "..speedwalkingSavedVariables["xoffset"])
-  print("prev y: "..speedwalkingSavedVariables["yoffset"])
-end
-
-
 speedwalkingFrame.secondsToTime = function(seconds)
   local min = math.floor(seconds/60);
   local sec = seconds - (min * 60);
@@ -246,7 +235,13 @@ speedwalkingFrame.updateInfo = function()
 end
 
 local function eventHandler(self, event, ...)
-  if event == "ADDON_LOADED" then
+  if event == "ADDON_LOADED" and ... == "Speedwalking" then
+    if not speedwalkingX or not speedwalkingY then
+      speedwalkingX = 0;
+      speedwalkingY = 0;
+    end
+    speedwalkingFrame:SetPoint("RIGHT", speedwalkingX, speedwalkingY);
+    print(speedwalkingX .. " " .. speedwalkingY);
     -- speedwalkingFrame.hideFrames();
   elseif event == "PLAYER_ENTERING_WORLD" then
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
@@ -306,7 +301,7 @@ speedwalkingFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
 speedwalkingFrame:SetWidth(400);
-speedwalkingFrame:SetPoint("RIGHT", speedwalkingSavedVariables["xoffset"], speedwalkingSavedVariables["yoffset"]);
+speedwalkingFrame:SetPoint("RIGHT", 0, 0);
 speedwalkingTimerFrame:SetHeight(40);
 speedwalkingTimerFrame:SetWidth(400);
 speedwalkingTimerFrame:SetPoint("TOP", 0, 0);
@@ -327,8 +322,8 @@ speedwalkingFrame:SetScript("OnMouseUp", function(self, button)
    self:StopMovingOrSizing();
    self.isMoving = false;
    point, relativeTo, relativePoint, xOffset, yOffset = speedwalkingFrame:GetPoint(index);
-   speedwalkingSavedVariables["xoffset"]=xOffset;
-   speedwalkingSavedVariables["yoffset"]=yOffset;   
+   speedwalkingX = xOffset;
+   speedwalkingY = yOffset;
   end
 end);
 speedwalkingFrame:SetScript("OnHide", function(self)
