@@ -263,7 +263,7 @@ end
 speedwalkingFrame.inTW = false;
 speedwalkingFrame.successColor = "000ff000";
 speedwalkingFrame.trueTimer = true;
-speedwalkingFrame.unlocked=true;
+speedwalkingFrame.unlocked = false;
 speedwalkingDungeonInfo = {};
 speedwalkingDungeonInfo[670] = {};
 speedwalkingDungeonInfo[670]["name"] = "Grim Batol";
@@ -302,8 +302,8 @@ speedwalkingTimerFrame:SetPoint("TOP", 0, 0);
 speedwalkingObjectiveFrame:SetHeight(200);
 speedwalkingObjectiveFrame:SetWidth(400);
 speedwalkingObjectiveFrame:SetPoint("TOP", 0, -40);
-speedwalkingFrame:SetMovable(true);
-speedwalkingFrame:EnableMouse(true);
+speedwalkingFrame:SetMovable(speedwalkingFrame.unlocked);
+speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
 
 speedwalkingFrame:SetScript("OnMouseDown", function(self, button)
   if speedwalkingFrame.unlocked and button == "LeftButton" and not self.isMoving then
@@ -359,6 +359,13 @@ SLASH_SPEEDWALKING1, SLASH_SPEEDWALKING2 = '/speedwalking', '/sw';
 local function handler(msg, editbox)
   if (msg == 'lock') then
     -- Variable Toggle Goes Here
+    if (speedwalkingFrame.unlocked == true) then
+      speedwalkingFrame.unlocked = false;
+    else
+      speedwalkingFrame.unlocked = true;
+    end
+    speedwalkingFrame:SetMovable(speedwalkingFrame.unlocked);
+    speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
   else
     print("Speedwalking - For Your Go Fast Timewalking Needs");
     print("Toggle Lock -  /sw lock");
