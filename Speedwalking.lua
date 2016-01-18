@@ -176,14 +176,27 @@ speedwalkingFrame.checkPositions = function(currentZoneID)
   local startX = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["x"];
   local startY = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["y"];
   local safeZone = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["safeZone"];
+  
+  dx = startX - posX;
+  dy = startY - posY;
+  distance = math.sqrt((dx * dx) + (dy * dy));
+  if (distance > safeZone) then
+    -- a player Has Left Safe Zone, Start Timer
+    speedwalkingFrame.currentTW["startTime"] = GetTime();
+  end
+  
   if (terrainMapID == currentZoneID) then
-    dx = startX - posX;
-    dy = startY - posY;
-    distance = math.sqrt((dx * dx) + (dy * dy));
-    if (distance > safeZone) then
-      -- Player Has Left Safe Zone, Start Timer
-      speedwalkingFrame.currentTW["startTime"] = GetTime();
-    end
+	for i=1,GetNumGroupMembers()-1--for i=1,GetNumGroupMembers(LE_PARTY_CATEGORY_INSTANCE)-1
+	do
+	  local posX, posY, posZ, terrainMapID = UnitPosition("party"..i);
+      dx = startX - posX;
+      dy = startY - posY;
+      distance = math.sqrt((dx * dx) + (dy * dy));
+      if (distance > safeZone) then
+        -- a player Has Left Safe Zone, Start Timer
+        speedwalkingFrame.currentTW["startTime"] = GetTime();
+      end
+	end
   end
 end
 
