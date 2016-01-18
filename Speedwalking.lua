@@ -232,8 +232,8 @@ end
 
 local function eventHandler(self, event, ...)
   if event == "ADDON_LOADED" then
-    speedwalkingFrame.hideFrames();
-  elseif event == "ZONE_CHANGED_NEW_AREA" then
+    -- speedwalkingFrame.hideFrames();
+  elseif event == "PLAYER_ENTERING_WORLD" then
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
     if (speedwalkingDungeonInfo and currentZoneID) then
       if (speedwalkingDungeonInfo[currentZoneID]) then
@@ -285,7 +285,7 @@ speedwalkingTimerFrame.font = speedwalkingTimerFrame:CreateFontString(nil, "OVER
 speedwalkingObjectiveFrame.font = speedwalkingObjectiveFrame:CreateFontString(nil, "OVERLAY");
 -- Register Events
 speedwalkingFrame:RegisterEvent("ADDON_LOADED");
-speedwalkingFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+speedwalkingFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
