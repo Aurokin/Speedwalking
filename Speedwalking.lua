@@ -263,6 +263,7 @@ end
 speedwalkingFrame.inTW = false;
 speedwalkingFrame.successColor = "000ff000";
 speedwalkingFrame.trueTimer = true;
+speedwalkingFrame.unlocked=true;
 speedwalkingDungeonInfo = {};
 speedwalkingDungeonInfo[670] = {};
 speedwalkingDungeonInfo[670]["name"] = "Grim Batol";
@@ -301,6 +302,27 @@ speedwalkingTimerFrame:SetPoint("TOP", 0, 0);
 speedwalkingObjectiveFrame:SetHeight(200);
 speedwalkingObjectiveFrame:SetWidth(400);
 speedwalkingObjectiveFrame:SetPoint("TOP", 0, -40);
+speedwalkingFrame:SetMovable(true);
+speedwalkingFrame:EnableMouse(true);
+
+speedwalkingFrame:SetScript("OnMouseDown", function(self, button)
+  if speedwalkingFrame.unlocked and button == "LeftButton" and not self.isMoving then
+   self:StartMoving();
+   self.isMoving = true;
+  end
+end);
+speedwalkingFrame:SetScript("OnMouseUp", function(self, button)
+  if button == "LeftButton" and self.isMoving then
+   self:StopMovingOrSizing();
+   self.isMoving = false;
+  end
+end);
+speedwalkingFrame:SetScript("OnHide", function(self)
+  if ( self.isMoving ) then
+   self:StopMovingOrSizing();
+   self.isMoving = false;
+  end
+end);
 
 -- Set Font Settings
 speedwalkingTimerFrame.font:SetAllPoints(true);
