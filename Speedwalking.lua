@@ -243,7 +243,7 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["yOffset"] = 0;
     end
     speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
-    print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
+    -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
   elseif event == "PLAYER_ENTERING_WORLD" then
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
@@ -327,7 +327,6 @@ speedwalkingFrame:SetScript("OnMouseUp", function(self, button)
    speedwalkingVars["anchor"] = point;
    speedwalkingVars["xOffset"] = xOffset;
    speedwalkingVars["yOffset"] = yOffset;
-   print(point .. " " .. xOffset .. " " .. yOffset);
   end
 end);
 speedwalkingFrame:SetScript("OnHide", function(self)
@@ -376,7 +375,6 @@ local function handler(msg, editbox)
     if (speedwalkingFrame.unlocked == true) then
       speedwalkingFrame.unlocked = false;
       string = "Speedwalking - Frame Locked";
-      speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
     else
       speedwalkingFrame.unlocked = true;
       string = "Speedwalking - Frame Unlocked";
