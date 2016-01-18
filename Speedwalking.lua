@@ -368,16 +368,26 @@ SLASH_SPEEDWALKING1, SLASH_SPEEDWALKING2 = '/speedwalking', '/sw';
 local function handler(msg, editbox)
   if (msg == 'lock') then
     -- Variable Toggle Goes Here
+    local string = "";
     if (speedwalkingFrame.unlocked == true) then
       speedwalkingFrame.unlocked = false;
+      string = "Speedwalking - Frame Locked";
     else
       speedwalkingFrame.unlocked = true;
+      string = "Speedwalking - Frame Unlocked";
     end
     speedwalkingFrame:SetMovable(speedwalkingFrame.unlocked);
     speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
+    print(string);
+  elseif (msg == "reset") then
+    speedwalkingX = 0;
+    speedwalkingY = 0;
+    speedwalkingFrame:SetPoint("RIGHT", 0, 0);
+    print("Speedwalking - Frame Position Reset");
   else
     print("Speedwalking - For Your Go Fast Timewalking Needs");
     print("Toggle Lock -  /sw lock");
+    print("Reset Frame Position - /sw reset");
   end
 end
 SlashCmdList["SPEEDWALKING"] = handler;
