@@ -237,12 +237,13 @@ end
 local function eventHandler(self, event, ...)
   if event == "ADDON_LOADED" and ... == "Speedwalking" then
     if not speedwalkingVars then
-      speedwalkingVars={};
-      speedwalkingVars["anchor"]="RIGHT";
-      speedwalkingVars["xOffset"]=0;
-      speedwalkingVars["yOffset"]=0;
+      speedwalkingVars = {};
+      speedwalkingVars["anchor"] = "RIGHT";
+      speedwalkingVars["xOffset"] = 0;
+      speedwalkingVars["yOffset"] = 0;
     end
     speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
+    print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
   elseif event == "PLAYER_ENTERING_WORLD" then
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
@@ -302,7 +303,7 @@ speedwalkingFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
 speedwalkingFrame:SetWidth(400);
-speedwalkingFrame:SetPoint("RIGHT", 0, 0);
+-- speedwalkingFrame:SetPoint("RIGHT", 0, 0);
 speedwalkingTimerFrame:SetHeight(40);
 speedwalkingTimerFrame:SetWidth(400);
 speedwalkingTimerFrame:SetPoint("TOP", 0, 0);
@@ -322,10 +323,11 @@ speedwalkingFrame:SetScript("OnMouseUp", function(self, button)
   if button == "LeftButton" and self.isMoving then
    self:StopMovingOrSizing();
    self.isMoving = false;
-   point, relativeTo, relativePoint, xOffset, yOffset = speedwalkingFrame:GetPoint(index);
-   speedwalkingVars["anchor"]=point;
+   point, relativeTo, relativePoint, xOffset, yOffset = speedwalkingFrame:GetPoint(1);
+   speedwalkingVars["anchor"] = point;
    speedwalkingVars["xOffset"] = xOffset;
    speedwalkingVars["yOffset"] = yOffset;
+   print(point .. " " .. xOffset .. " " .. yOffset);
   end
 end);
 speedwalkingFrame:SetScript("OnHide", function(self)
@@ -374,6 +376,7 @@ local function handler(msg, editbox)
     if (speedwalkingFrame.unlocked == true) then
       speedwalkingFrame.unlocked = false;
       string = "Speedwalking - Frame Locked";
+      speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
     else
       speedwalkingFrame.unlocked = true;
       string = "Speedwalking - Frame Unlocked";
@@ -382,7 +385,7 @@ local function handler(msg, editbox)
     speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
     print(string);
   elseif (msg == "reset") then
-    speedwalkingVars["anchor"]="RIGHT";
+    speedwalkingVars["anchor"] = "RIGHT";
     speedwalkingVars["xOffset"] = 0;
     speedwalkingVars["yOffset"] = 0;
     speedwalkingFrame:SetPoint("RIGHT", 0, 0);
