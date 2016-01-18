@@ -173,9 +173,11 @@ end
 speedwalkingFrame.checkPositions = function(currentZoneID)
   local isAnyoneOutside=false;
   isAnyoneOutside=isAnyoneOutside or speedwalkingFrame.checkUnitPosition(currentZoneID,"player");
-	for i=1,GetNumGroupMembers()-1--for i=1,GetNumGroupMembers(LE_PARTY_CATEGORY_INSTANCE)-1
-	do
-    isAnyoneOutside=isAnyoneOutside or speedwalkingFrame.checkUnitPosition(currentZoneID,"party"..i)
+  if (GetNumGroupMembers() ~= 0) then
+  	for i=1,GetNumGroupMembers()-1--for i=1,GetNumGroupMembers(LE_PARTY_CATEGORY_INSTANCE)-1
+  	do
+      isAnyoneOutside=isAnyoneOutside or speedwalkingFrame.checkUnitPosition(currentZoneID,"party"..i)
+    end
   end
   if isAnyoneOutside then
     --time to start timer
