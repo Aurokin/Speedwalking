@@ -255,9 +255,9 @@ local function eventHandler(self, event, ...)
       if (speedwalkingDungeonInfo[currentZoneID]) then
         speedwalkingFrame.wipeTables();
         speedwalkingFrame.setupTW(currentZoneID);
-        speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.inProgressScan(currentZoneID);
+        speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
         -- Late Starts Don't Need An Update
-        speedwalkingFrame.currentTW["firstUpdate"] = speedwalkingFrame.currentTW["lateStart"];
+        -- speedwalkingFrame.currentTW["firstUpdate"] = speedwalkingFrame.currentTW["lateStart"];
         speedwalkingFrame.showFrames();
         speedwalkingFrame.inTW = true;
         speedwalkingFrame.updateInfo();
@@ -270,11 +270,10 @@ local function eventHandler(self, event, ...)
     local _, _, steps = C_Scenario.GetStepInfo();
     speedwalkingFrame.currentTW["steps"] = steps;
     speedwalkingFrame.fillTables(steps);
+    speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
     speedwalkingFrame.currentTW["firstUpdate"] = true;
   end
 end
-
-
 
 -- Global Variables (Most likely saved later)
 speedwalkingFrame.inTW = false;
