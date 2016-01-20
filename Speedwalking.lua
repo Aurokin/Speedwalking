@@ -337,7 +337,8 @@ local function eventHandler(self, event, ...)
   elseif event == "PLAYER_ENTERING_WORLD" then
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
     if (speedwalkingDungeonInfo and currentZoneID) then
-      if (speedwalkingDungeonInfo[currentZoneID]) then
+      if (speedwalkingDungeonInfo[currentZoneID] and difficulty == 1 and speedwalkingFrame.timewalking == true) then
+        -- Difficulty 1 is Normal, 2 is Heroic, 8 is CM, 24 is Timewalker
         speedwalkingFrame.wipeTables();
         speedwalkingFrame.setupTW(currentZoneID);
         speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
@@ -345,9 +346,18 @@ local function eventHandler(self, event, ...)
         -- speedwalkingFrame.currentTW["firstUpdate"] = speedwalkingFrame.currentTW["lateStart"];
         speedwalkingFrame.showFrames();
         speedwalkingFrame.inTW = true;
+        speedwalkingFrame.inCM = false;
+        speedwalkingFrame.updateInfo();
+      elseif (speedwalkingDungeonInfo[currentZoneID] and difficulty == 8 and speedwalkingFrame.cms == true) then
+        speedwalkingFrame.wipeTables();
+        speedwalkingFrame.setupTW(currentZoneID);
+        speedwalkingFrame.showFrames();
+        speedwalkingFrame.inTW = false;
+        speedwalkingFrame.inCM = true;
         speedwalkingFrame.updateInfo();
       else
         speedwalkingFrame.inTW = false;
+        speedwalkingFrame.inCM = false;
         speedwalkingFrame.hideFrames();
       end
     end
@@ -373,10 +383,13 @@ end
 
 -- Global Variables (Most likely saved later)
 speedwalkingFrame.inTW = false;
+speedwalkingFrame.inCM = false;
 speedwalkingFrame.successColor = "000ff000";
 speedwalkingFrame.trueTimer = true;
 speedwalkingFrame.goldTimer = true;
 speedwalkingFrame.competitive = true;
+speedwalkingFrame.timewalking = true;
+speedwalkingFrame.cms = true;
 speedwalkingFrame.unlocked = false;
 speedwalkingDungeonInfo = {};
 -- Cataclysm Dungeons
@@ -470,6 +483,17 @@ speedwalkingDungeonInfo[725]["startingArea"] = {};
 speedwalkingDungeonInfo[725]["startingArea"]["x"] = 851.10003662109;
 speedwalkingDungeonInfo[725]["startingArea"]["y"] = 986.5;
 speedwalkingDungeonInfo[725]["startingArea"]["safeZone"] = 20;
+
+-- WoD CMs
+speedwalkingDungeonInfo[1195] = {};
+speedwalkingDungeonInfo[1195]["name"] = "Iron Docks";
+speedwalkingDungeonInfo[1195]["enemies"] = 999;
+speedwalkingDungeonInfo[1195]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[1195]["mobs"] = {};
+speedwalkingDungeonInfo[1195]["startingArea"] = {};
+speedwalkingDungeonInfo[1195]["startingArea"]["x"] = 0;
+speedwalkingDungeonInfo[1195]["startingArea"]["y"] = 0;
+speedwalkingDungeonInfo[1195]["startingArea"]["safeZone"] = 0;
 speedwalkingFrame.speedwalkingDungeonInfo = speedwalkingDungeonInfo;
 
 -- Register Textures
