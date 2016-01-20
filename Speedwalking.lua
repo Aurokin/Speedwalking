@@ -345,7 +345,7 @@ local function eventHandler(self, event, ...)
   elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and speedwalkingFrame.inTW == true and speedwalkingFrame.currentTW and speedwalkingFrame.competitive == true then
     if speedwalkingFrame.currentTW["enemies"] < speedwalkingFrame.currentTW["totalEnemies"] then
       local encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName = ...;
-      if (msg == "UNIT_DIED") then
+      if (msg == "UNIT_DIED" and speedwalkingDungeonInfo[speedwalkingFrame.currentTW["zoneID"]]["mobs"][destName]) then
         print(destGUID .. " - " .. destName);
         speedwalkingFrame.currentTW["enemies"] = speedwalkingFrame.currentTW["enemies"] + 1;
         if (speedwalkingFrame.currentTW["enemies"] == speedwalkingFrame.currentTW["totalEnemies"]) then
@@ -367,13 +367,35 @@ speedwalkingDungeonInfo = {};
 speedwalkingDungeonInfo[670] = {};
 speedwalkingDungeonInfo[670]["name"] = "Grim Batol";
 -- Key Is Unit Name In Game, Value Is Display Name
-speedwalkingDungeonInfo[670]["enemies"] = 100;
+speedwalkingDungeonInfo[670]["enemies"] = 81;
 -- Timer Is Stored In Seconds
 speedwalkingDungeonInfo[670]["goldTimer"] = 1200;
 -- Currently Table Is For Mobs Not To Be Counted
 -- It May Be Better To Store Mobs That Should Be Counted
 speedwalkingDungeonInfo[670]["mobs"] = {};
+speedwalkingDungeonInfo[670]["mobs"]["Crimsonborne Guardian"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Azureborne Guardian"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Crimsonborne Seer"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Azureborne Seer"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Crimsonborne Warlord"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Azureborne Warlord"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Twilight Earthshaper"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Twilight Stormbreaker"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Twilight Armsmaster"] = true;
 speedwalkingDungeonInfo[670]["mobs"]["Twilight Enforcer"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Twilight Shadow Weaver"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Twilight Beguiler"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Twilight War-Mage"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Twilight Thundercaller"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Twilight Firecatcher"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Twilight Wyrmcaller"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Twilight Drake"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Ascended Flameseeker"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Ascended Windwalker"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Ascended Rockbreaker"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Ascended Waterlasher"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Enslaved Gronn Brute"] = true;
+speedwalkingDungeonInfo[670]["mobs"]["Faceless Corruptor"] = true;
 speedwalkingDungeonInfo[670]["startingArea"] = {};
 speedwalkingDungeonInfo[670]["startingArea"]["x"] = -624.20001220703;
 speedwalkingDungeonInfo[670]["startingArea"]["y"] = -189.40000915527;
@@ -382,6 +404,7 @@ speedwalkingDungeonInfo[938] = {};
 speedwalkingDungeonInfo[938]["name"] = "End Time";
 speedwalkingDungeonInfo[938]["enemies"] = 999;
 speedwalkingDungeonInfo[938]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[938]["mobs"] = {};
 speedwalkingDungeonInfo[938]["startingArea"] = {};
 speedwalkingDungeonInfo[938]["startingArea"]["x"] = 3724.6999511719;
 speedwalkingDungeonInfo[938]["startingArea"]["y"] = -400.70001220703;
@@ -390,6 +413,7 @@ speedwalkingDungeonInfo[643] = {};
 speedwalkingDungeonInfo[643]["name"] = "Throne of the Tides";
 speedwalkingDungeonInfo[643]["enemies"] = 999;
 speedwalkingDungeonInfo[643]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[643]["mobs"] = {};
 speedwalkingDungeonInfo[643]["startingArea"] = {};
 speedwalkingDungeonInfo[643]["startingArea"]["x"] = -601.20001220703;
 speedwalkingDungeonInfo[643]["startingArea"]["y"] = 809.5;
@@ -398,6 +422,7 @@ speedwalkingDungeonInfo[644] = {};
 speedwalkingDungeonInfo[644]["name"] = "Halls of Origination";
 speedwalkingDungeonInfo[644]["enemies"] = 999;
 speedwalkingDungeonInfo[644]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[644]["mobs"] = {};
 speedwalkingDungeonInfo[644]["startingArea"] = {};
 speedwalkingDungeonInfo[644]["startingArea"]["x"] = -954.10003662109;
 speedwalkingDungeonInfo[644]["startingArea"]["y"] = 462.39999389648;
@@ -406,6 +431,7 @@ speedwalkingDungeonInfo[755] = {};
 speedwalkingDungeonInfo[755]["name"] = "Lost City of Tol'Vir";
 speedwalkingDungeonInfo[755]["enemies"] = 999;
 speedwalkingDungeonInfo[755]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[755]["mobs"] = {};
 speedwalkingDungeonInfo[755]["startingArea"] = {};
 speedwalkingDungeonInfo[755]["startingArea"]["x"] = -10700.400390625;
 speedwalkingDungeonInfo[755]["startingArea"]["y"] = -1312.7000732422;
@@ -414,6 +440,7 @@ speedwalkingDungeonInfo[657] = {};
 speedwalkingDungeonInfo[657]["name"] = "The Vortex Pinnacle";
 speedwalkingDungeonInfo[657]["enemies"] = 999;
 speedwalkingDungeonInfo[657]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[657]["mobs"] = {};
 speedwalkingDungeonInfo[657]["startingArea"] = {};
 speedwalkingDungeonInfo[657]["startingArea"]["x"] = -337.60000610352;
 speedwalkingDungeonInfo[657]["startingArea"]["y"] = 15.300000190735;
@@ -422,6 +449,7 @@ speedwalkingDungeonInfo[725] = {};
 speedwalkingDungeonInfo[725]["name"] = "The Stonecore";
 speedwalkingDungeonInfo[725]["enemies"] = 999;
 speedwalkingDungeonInfo[725]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[725]["mobs"] = {};
 speedwalkingDungeonInfo[725]["startingArea"] = {};
 speedwalkingDungeonInfo[725]["startingArea"]["x"] = 851.10003662109;
 speedwalkingDungeonInfo[725]["startingArea"]["y"] = 986.5;
