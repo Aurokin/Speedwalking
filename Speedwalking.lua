@@ -61,7 +61,7 @@ speedwalkingFrame.speedwalkingTimerText = function(currentZoneID)
     -- Format Seconds
     goldSec = speedwalkingFrame.formatTimeNoMS(goldSec);
     -- Create String
-    if (startTime) then
+    if ((startTime and speedwalkingFrame.inTW == true) or (startTime and speedwalkingFrame.inCM == true and speedwalkingFrame.trueTimer == true)) then
       local currentTime = GetTime();
       local secs = currentTime - startTime;
       startMin, startSec = speedwalkingFrame.secondsToTime(secs);
@@ -72,6 +72,11 @@ speedwalkingFrame.speedwalkingTimerText = function(currentZoneID)
         startMin = speedwalkingFrame.formatTimeNoMS(startMin);
         startSec = speedwalkingFrame.formatTimeNoMS(startSec);
       end
+    elseif ((not startTime or speedwalkingFrame.trueTimer == false) and speedwalkingFrame.inCM == true) then
+      _, timeCM = GetWorldElapsedTime(1);
+      startMin, startSec = speedwalkingFrame.secondsToTime(timeCM);
+      startMin = speedwalkingFrame.formatTimeNoMS(startMin);
+      startSec = speedwalkingFrame.formatTimeNoMS(startSec);
     else
       startMin = "00";
       startSec = "00";
