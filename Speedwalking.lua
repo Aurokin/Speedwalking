@@ -351,6 +351,8 @@ local function eventHandler(self, event, ...)
       elseif (speedwalkingDungeonInfo[currentZoneID] and difficulty == 8 and speedwalkingFrame.cms == true) then
         speedwalkingFrame.wipeTables();
         speedwalkingFrame.setupTW(currentZoneID);
+        ObjectiveTrackerFrame:SetScript("OnEvent", nil);
+        ObjectiveTrackerFrame:Hide();
         speedwalkingFrame.showFrames();
         speedwalkingFrame.inTW = false;
         speedwalkingFrame.inCM = true;
@@ -367,6 +369,19 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.fillTables(steps);
     speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
     speedwalkingFrame.currentTW["firstUpdate"] = true;
+  elseif event == "CHALLENGE_MODE_START" and speedwalkingFrame.cms == true and speedwalkingFrame.inCM == true then
+    local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
+    speedwalkingFrame.wipeTables();
+    speedwalkingFrame.setupTW(currentZoneID);
+    speedwalkingFrame.updateInfo();
+    if (speedwalkingFrame.trueTimer) then
+      speedwalkingFrame.currentTW["startTime"] = GetTime();
+    end
+  elseif event == "CHALLENGE_MODE_RESET" and speedwalkingFrame.cms == true and speedwalkingFrame.inCM == true then
+    local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
+    speedwalkingFrame.wipeTables();
+    speedwalkingFrame.setupTW(currentZoneID);
+    speedwalkingFrame.updateInfo();
   elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and speedwalkingFrame.inTW == true and speedwalkingFrame.currentTW and speedwalkingFrame.competitive == true then
     if speedwalkingFrame.currentTW["enemies"] < speedwalkingFrame.currentTW["totalEnemies"] then
       local encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName = ...;
@@ -508,6 +523,8 @@ speedwalkingFrame:RegisterEvent("ADDON_LOADED");
 speedwalkingFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 speedwalkingFrame:RegisterEvent("SCENARIO_POI_UPDATE");
 speedwalkingFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
+speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_START");
+speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_RESET");
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
