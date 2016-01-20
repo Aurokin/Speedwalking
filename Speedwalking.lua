@@ -78,8 +78,10 @@ speedwalkingFrame.speedwalkingTimerText = function(currentZoneID)
     end
     string = startMin .. ":" .. startSec;
     speedwalkingFrame.currentTW["time"] = string;
-    string = string .. " / ";
-    string = string .. goldMin .. ":" .. goldSec;
+    if (speedwalkingFrame.goldTimer == true) then
+      string = string .. " / ";
+      string = string .. goldMin .. ":" .. goldSec;
+    end
   end
   return string;
 end
@@ -297,9 +299,20 @@ speedwalkingFrame.toggleTrueTimer = function()
   speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetChecked(speedwalkingFrame.trueTimer);
 end
 
+speedwalkingFrame.toggleGoldTimer = function()
+  if (speedwalkingFrame.goldTimer == true) then
+    speedwalkingFrame.goldTimer = false;
+  else
+    speedwalkingFrame.goldTimer = true;
+  end
+  speedwalkingVars["goldTimer"] = speedwalkingFrame.goldTimer;
+  speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetChecked(speedwalkingFrame.goldTimer);
+end
+
 speedwalkingFrame.setupAddonPanel = function()
   speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetChecked(speedwalkingVars["trueTimer"]);
   speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(speedwalkingVars["competitive"]);
+  speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetChecked(speedwalkingVars["goldTimer"]);
 end
 
 local function eventHandler(self, event, ...)
@@ -311,11 +324,13 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["yOffset"] = 0;
       speedwalkingVars["trueTimer"] = true;
       speedwalkingVars["competitive"] = false;
+      speedwalkingVars["goldTimer"] = true;
     end
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
     speedwalkingFrame.trueTimer = speedwalkingVars["trueTimer"];
     speedwalkingFrame.competitive = speedwalkingVars["competitive"];
+    speedwalkingFrame.goldTimer = speedwalkingVars["goldTimer"];
     speedwalkingFrame.setupAddonPanel();
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
@@ -360,6 +375,7 @@ end
 speedwalkingFrame.inTW = false;
 speedwalkingFrame.successColor = "000ff000";
 speedwalkingFrame.trueTimer = true;
+speedwalkingFrame.goldTimer = true;
 speedwalkingFrame.competitive = true;
 speedwalkingFrame.unlocked = false;
 speedwalkingDungeonInfo = {};
@@ -587,6 +603,20 @@ speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetText("Compet
 speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(false);
 speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCompetitive() end);
 
+speedwalkingFrame.panel.buttonText["SpeedwalkingGoldTimerText"] = speedwalkingFrame.panel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.panel.buttonText["SpeedwalkingGoldTimerText"]:SetFontObject(GameFontWhite);
+speedwalkingFrame.panel.buttonText["SpeedwalkingGoldTimerText"]:SetJustifyH("LEFT");
+speedwalkingFrame.panel.buttonText["SpeedwalkingGoldTimerText"]:SetJustifyV("TOP");
+speedwalkingFrame.panel.buttonText["SpeedwalkingGoldTimerText"]:ClearAllPoints();
+speedwalkingFrame.panel.buttonText["SpeedwalkingGoldTimerText"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 30, -90);
+speedwalkingFrame.panel.buttonText["SpeedwalkingGoldTimerText"]:SetText("Gold Timer");
+
+speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"] = CreateFrame("CheckButton", "SpeedwalkingGoldTimerButton", speedwalkingFrame.panel, "OptionsCheckButtonTemplate");
+speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 5, -80);
+speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetText("Gold Timer");
+speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetChecked(true);
+speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleGoldTimer() end);
+
 InterfaceOptions_AddCategory(speedwalkingFrame.panel);
 
 -- Manage Events
@@ -603,6 +633,8 @@ local function handler(msg, editbox)
     speedwalkingVars["xOffset"] = 0;
     speedwalkingVars["yOffset"] = 0;
     speedwalkingVars["trueTimer"] = true;
+    speedwalkingVars["competitive"] = false;
+    speedwalkingVars["goldTimer"] = true;
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint("RIGHT", 0, 0);
     print("Speedwalking - Frame Position Reset");
