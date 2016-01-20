@@ -26,6 +26,7 @@ speedwalkingFrame.formatTimeMS = function(time)
   end
   return time;
 end
+
 speedwalkingFrame.finalParse = function()
   local steps = speedwalkingFrame.currentTW["steps"];
   local name, curValue, finalValue;
@@ -84,22 +85,35 @@ speedwalkingFrame.speedwalkingTimerText = function(currentZoneID)
 end
 
 speedwalkingFrame.speedwalkingObjectiveText = function()
+  local enemies = "";
   local string = "";
   local name, status, curValue, finalValue, complete;
   if speedwalkingFrame.currentTW then
     local bosses = speedwalkingFrame.currentTW["bosses"];
-    -- local enemies = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["enemies"];
     local steps = speedwalkingFrame.currentTW["steps"];
+    if (speedwalkingFrame.competitive == true and speedwalkingFrame.inTW == true) then
+      if (speedwalkingFrame.currentTW["enemiesTime"]) then
+        enemies = string.format("%s - %d/%d - %s\n",  "Enemies", speedwalkingFrame.currentTW["enemies"], speedwalkingFrame.currentTW["totalEnemies"], speedwalkingFrame.currentTW["enemiesTime"]);
+      else
+        enemies = string.format("%s - %d/%d\n", "Enemies", speedwalkingFrame.currentTW["enemies"], speedwalkingFrame.currentTW["totalEnemies"]);
+      end
+    end
     for i = 1, steps do
       name, _, status, curValue, finalValue = C_Scenario.GetCriteriaInfo(i);
       if (finalValue == 0 or not finalValue) then
         -- Timewalker Complete
         if (speedwalkingFrame.currentTW["finalParse"] == false) then
           -- Add Last Time
-          speedwalkingFrame.finalParse();
-          speedwalkingFrame.currentTW["finalParse"] = true;
+          if (speedwalkingFrame.competitive == true and not speedwalkingFrame.currentTW["enemiesTime"] and speedwalkingFrame.inTW == true) then
+            -- Just Don't Finish Yet!
+            speedwalkingFrame.finalParse();
+          else
+            speedwalkingFrame.finalParse();
+            --speedwalkingFrame.finalParse();
+            speedwalkingFrame.currentTW["finalParse"] = true;
+          end
         end
-        return speedwalkingFrame.currentTW["string"];
+        return speedwalkingFrame.currentTW["string"] .. enemies;
       end
       if (curValue ~= speedwalkingFrame.currentTW["curValues"][i]) then
         if (curValue == finalValue) then
@@ -118,6 +132,9 @@ speedwalkingFrame.speedwalkingObjectiveText = function()
     -- string = string .. "Enemies - " .. speedwalkingFrame.currentTW["enemies"] .. "/" .. enemies .. "\n";
   end
   speedwalkingFrame.currentTW["string"] = string;
+  if (speedwalkingFrame.competitive == true and speedwalkingFrame.inTW == true) then
+    string = string .. enemies;
+  end
   return string;
 end
 
@@ -167,7 +184,9 @@ speedwalkingFrame.setupTW = function(currentZoneID)
   speedwalkingFrame.currentTW["firstUpdate"] = false;
   speedwalkingFrame.currentTW["finalParse"] = false;
   speedwalkingFrame.currentTW["lateStart"] = false;
-  -- speedwalkingFrame.currentTW["enemies"] = 0;
+  speedwalkingFrame.currentTW["enemies"] = 0;
+  speedwalkingFrame.currentTW["totalEnemies"] = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["enemies"];
+  speedwalkingFrame.currentTW["enemiesTime"] = nil;
   speedwalkingFrame.fillTables(steps);
 end
 
@@ -183,23 +202,27 @@ speedwalkingFrame.checkPositions = function(currentZoneID)
   if isAnyoneOutside then
     --time to start timer
     speedwalkingFrame.currentTW["startTime"] = GetTime();
+    speedwalkingFrame.currentTW["firstUpdate"] = true;
     return true;
   end
   return false;
 end
 
 speedwalkingFrame.checkUnitPosition = function(currentZoneID,unitName)
-  local dx, dy, distance;
-  local posX, posY, posZ, terrainMapID = UnitPosition(unitName);
-  local startX = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["x"];
-  local startY = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["y"];
-  local safeZone = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["safeZone"];
+  if currentZoneID and unitName then
+    local dx, dy, distance;
+    local posX, posY, posZ, terrainMapID = UnitPosition(unitName);
+    local startX = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["x"];
+    local startY = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["y"];
+    local safeZone = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["startingArea"]["safeZone"];
 
-  dx = startX - posX;
-  dy = startY - posY;
-  distance = math.sqrt((dx * dx) + (dy * dy));
+    dx = startX - posX;
+    dy = startY - posY;
+    distance = math.sqrt((dx * dx) + (dy * dy));
 
-  return currentZoneID==terrainMapID and distance > safeZone;
+    return currentZoneID==terrainMapID and distance > safeZone;
+  end
+  return false;
 end
 
 speedwalkingFrame.inProgressScan = function(currentZoneID)
@@ -237,6 +260,48 @@ speedwalkingFrame.updateInfo = function()
   end
 end
 
+speedwalkingFrame.toggleLock = function()
+  -- Variable Toggle Goes Here
+  local string = "";
+  if (speedwalkingFrame.unlocked == true) then
+    speedwalkingFrame.unlocked = false;
+    speedwalkingFrame.panel.buttons["SpeedwalkingLockCheckButton"]:SetChecked(true);
+    string = "Speedwalking - Frame Locked";
+  else
+    speedwalkingFrame.unlocked = true;
+    speedwalkingFrame.panel.buttons["SpeedwalkingLockCheckButton"]:SetChecked(false);
+    string = "Speedwalking - Frame Unlocked";
+  end
+  speedwalkingFrame:SetMovable(speedwalkingFrame.unlocked);
+  speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
+  print(string);
+end
+
+speedwalkingFrame.toggleCompetitive = function()
+  if (speedwalkingFrame.competitive == true) then
+    speedwalkingFrame.competitive = false;
+  else
+    speedwalkingFrame.competitive = true;
+  end
+  speedwalkingVars["competitive"] = speedwalkingFrame.competitive;
+  speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(speedwalkingFrame.competitive);
+end
+
+speedwalkingFrame.toggleTrueTimer = function()
+  if (speedwalkingFrame.trueTimer == true) then
+    speedwalkingFrame.trueTimer = false;
+  else
+    speedwalkingFrame.trueTimer = true;
+  end
+  speedwalkingVars["trueTimer"] = speedwalkingFrame.trueTimer;
+  speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetChecked(speedwalkingFrame.trueTimer);
+end
+
+speedwalkingFrame.setupAddonPanel = function()
+  speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetChecked(speedwalkingVars["trueTimer"]);
+  speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(speedwalkingVars["competitive"]);
+end
+
 local function eventHandler(self, event, ...)
   if event == "ADDON_LOADED" and ... == "Speedwalking" then
     if not speedwalkingVars then
@@ -244,9 +309,14 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["anchor"] = "RIGHT";
       speedwalkingVars["xOffset"] = 0;
       speedwalkingVars["yOffset"] = 0;
+      speedwalkingVars["trueTimer"] = true;
+      speedwalkingVars["competitive"] = false;
     end
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
+    speedwalkingFrame.trueTimer = speedwalkingVars["trueTimer"];
+    speedwalkingFrame.competitive = speedwalkingVars["competitive"];
+    speedwalkingFrame.setupAddonPanel();
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
   elseif event == "PLAYER_ENTERING_WORLD" then
@@ -272,6 +342,17 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.fillTables(steps);
     speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
     speedwalkingFrame.currentTW["firstUpdate"] = true;
+  elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and speedwalkingFrame.inTW == true and speedwalkingFrame.currentTW and speedwalkingFrame.competitive == true then
+    if speedwalkingFrame.currentTW["enemies"] < speedwalkingFrame.currentTW["totalEnemies"] then
+      local encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName = ...;
+      if (msg == "UNIT_DIED") then
+        print(destGUID .. " - " .. destName);
+        speedwalkingFrame.currentTW["enemies"] = speedwalkingFrame.currentTW["enemies"] + 1;
+        if (speedwalkingFrame.currentTW["enemies"] == speedwalkingFrame.currentTW["totalEnemies"]) then
+          speedwalkingFrame.currentTW["enemiesTime"] = string.format("|c%s%s|r", speedwalkingFrame.successColor, speedwalkingFrame.currentTW["time"]);
+        end
+      end
+    end
   end
 end
 
@@ -279,25 +360,27 @@ end
 speedwalkingFrame.inTW = false;
 speedwalkingFrame.successColor = "000ff000";
 speedwalkingFrame.trueTimer = true;
+speedwalkingFrame.competitive = true;
 speedwalkingFrame.unlocked = false;
 speedwalkingDungeonInfo = {};
 -- Cataclysm Dungeons
 speedwalkingDungeonInfo[670] = {};
 speedwalkingDungeonInfo[670]["name"] = "Grim Batol";
 -- Key Is Unit Name In Game, Value Is Display Name
-speedwalkingDungeonInfo[670]["enemies"] = 69;
+speedwalkingDungeonInfo[670]["enemies"] = 100;
 -- Timer Is Stored In Seconds
 speedwalkingDungeonInfo[670]["goldTimer"] = 1200;
 -- Currently Table Is For Mobs Not To Be Counted
 -- It May Be Better To Store Mobs That Should Be Counted
-speedwalkingDungeonInfo[670]["padMobs"] = {};
-speedwalkingDungeonInfo[670]["padMobs"]["Trogg Dweller"] = true;
+speedwalkingDungeonInfo[670]["mobs"] = {};
+speedwalkingDungeonInfo[670]["mobs"]["Twilight Enforcer"] = true;
 speedwalkingDungeonInfo[670]["startingArea"] = {};
 speedwalkingDungeonInfo[670]["startingArea"]["x"] = -624.20001220703;
 speedwalkingDungeonInfo[670]["startingArea"]["y"] = -189.40000915527;
 speedwalkingDungeonInfo[670]["startingArea"]["safeZone"] = 20;
 speedwalkingDungeonInfo[938] = {};
 speedwalkingDungeonInfo[938]["name"] = "End Time";
+speedwalkingDungeonInfo[938]["enemies"] = 999;
 speedwalkingDungeonInfo[938]["goldTimer"] = 1200;
 speedwalkingDungeonInfo[938]["startingArea"] = {};
 speedwalkingDungeonInfo[938]["startingArea"]["x"] = 3724.6999511719;
@@ -305,6 +388,7 @@ speedwalkingDungeonInfo[938]["startingArea"]["y"] = -400.70001220703;
 speedwalkingDungeonInfo[938]["startingArea"]["safeZone"] = 20;
 speedwalkingDungeonInfo[643] = {};
 speedwalkingDungeonInfo[643]["name"] = "Throne of the Tides";
+speedwalkingDungeonInfo[643]["enemies"] = 999;
 speedwalkingDungeonInfo[643]["goldTimer"] = 1200;
 speedwalkingDungeonInfo[643]["startingArea"] = {};
 speedwalkingDungeonInfo[643]["startingArea"]["x"] = -601.20001220703;
@@ -312,6 +396,7 @@ speedwalkingDungeonInfo[643]["startingArea"]["y"] = 809.5;
 speedwalkingDungeonInfo[643]["startingArea"]["safeZone"] = 20;
 speedwalkingDungeonInfo[644] = {};
 speedwalkingDungeonInfo[644]["name"] = "Halls of Origination";
+speedwalkingDungeonInfo[644]["enemies"] = 999;
 speedwalkingDungeonInfo[644]["goldTimer"] = 1200;
 speedwalkingDungeonInfo[644]["startingArea"] = {};
 speedwalkingDungeonInfo[644]["startingArea"]["x"] = -954.10003662109;
@@ -319,6 +404,7 @@ speedwalkingDungeonInfo[644]["startingArea"]["y"] = 462.39999389648;
 speedwalkingDungeonInfo[644]["startingArea"]["safeZone"] = 20;
 speedwalkingDungeonInfo[755] = {};
 speedwalkingDungeonInfo[755]["name"] = "Lost City of Tol'Vir";
+speedwalkingDungeonInfo[755]["enemies"] = 999;
 speedwalkingDungeonInfo[755]["goldTimer"] = 1200;
 speedwalkingDungeonInfo[755]["startingArea"] = {};
 speedwalkingDungeonInfo[755]["startingArea"]["x"] = -10700.400390625;
@@ -326,6 +412,7 @@ speedwalkingDungeonInfo[755]["startingArea"]["y"] = -1312.7000732422;
 speedwalkingDungeonInfo[755]["startingArea"]["safeZone"] = 20;
 speedwalkingDungeonInfo[657] = {};
 speedwalkingDungeonInfo[657]["name"] = "The Vortex Pinnacle";
+speedwalkingDungeonInfo[657]["enemies"] = 999;
 speedwalkingDungeonInfo[657]["goldTimer"] = 1200;
 speedwalkingDungeonInfo[657]["startingArea"] = {};
 speedwalkingDungeonInfo[657]["startingArea"]["x"] = -337.60000610352;
@@ -333,6 +420,7 @@ speedwalkingDungeonInfo[657]["startingArea"]["y"] = 15.300000190735;
 speedwalkingDungeonInfo[657]["startingArea"]["safeZone"] = 20;
 speedwalkingDungeonInfo[725] = {};
 speedwalkingDungeonInfo[725]["name"] = "The Stonecore";
+speedwalkingDungeonInfo[725]["enemies"] = 999;
 speedwalkingDungeonInfo[725]["goldTimer"] = 1200;
 speedwalkingDungeonInfo[725]["startingArea"] = {};
 speedwalkingDungeonInfo[725]["startingArea"]["x"] = 851.10003662109;
@@ -351,6 +439,7 @@ speedwalkingObjectiveFrame.font = speedwalkingObjectiveFrame:CreateFontString(ni
 speedwalkingFrame:RegisterEvent("ADDON_LOADED");
 speedwalkingFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 speedwalkingFrame:RegisterEvent("SCENARIO_POI_UPDATE");
+speedwalkingFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
@@ -417,6 +506,59 @@ speedwalkingObjectiveFrame.texture:SetTexture(0, 1, 0, 0);
 -- Interface Panel
 speedwalkingFrame.panel = CreateFrame("Frame", "SpeedwalkingPanel", UIParent);
 speedwalkingFrame.panel.name = "Speedwalking";
+speedwalkingFrame.panel.buttons = {};
+speedwalkingFrame.panel.buttonText = {};
+
+speedwalkingFrame.panel.header = speedwalkingFrame.panel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.panel.header:SetFontObject(GameFontNormalLarge);
+speedwalkingFrame.panel.header:SetJustifyH("LEFT");
+speedwalkingFrame.panel.header:SetJustifyV("TOP");
+speedwalkingFrame.panel.header:ClearAllPoints();
+speedwalkingFrame.panel.header:SetPoint("TOPLEFT", 5, 0);
+speedwalkingFrame.panel.header:SetText("Speedwalking");
+
+speedwalkingFrame.panel.buttonText["SpeedwalkingLockText"] = speedwalkingFrame.panel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.panel.buttonText["SpeedwalkingLockText"]:SetFontObject(GameFontWhite);
+speedwalkingFrame.panel.buttonText["SpeedwalkingLockText"]:SetJustifyH("LEFT");
+speedwalkingFrame.panel.buttonText["SpeedwalkingLockText"]:SetJustifyV("TOP");
+speedwalkingFrame.panel.buttonText["SpeedwalkingLockText"]:ClearAllPoints();
+speedwalkingFrame.panel.buttonText["SpeedwalkingLockText"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 30, -30);
+speedwalkingFrame.panel.buttonText["SpeedwalkingLockText"]:SetText("Lock");
+
+speedwalkingFrame.panel.buttons["SpeedwalkingLockCheckButton"] = CreateFrame("CheckButton", "SpeedwalkingLockCheckButton", speedwalkingFrame.panel, "OptionsCheckButtonTemplate");
+speedwalkingFrame.panel.buttons["SpeedwalkingLockCheckButton"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 5, -20);
+speedwalkingFrame.panel.buttons["SpeedwalkingLockCheckButton"]:SetText("Lock");
+speedwalkingFrame.panel.buttons["SpeedwalkingLockCheckButton"]:SetChecked(true);
+speedwalkingFrame.panel.buttons["SpeedwalkingLockCheckButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleLock() end);
+
+speedwalkingFrame.panel.buttonText["SpeedwalkingTrueTimerText"] = speedwalkingFrame.panel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.panel.buttonText["SpeedwalkingTrueTimerText"]:SetFontObject(GameFontWhite);
+speedwalkingFrame.panel.buttonText["SpeedwalkingTrueTimerText"]:SetJustifyH("LEFT");
+speedwalkingFrame.panel.buttonText["SpeedwalkingTrueTimerText"]:SetJustifyV("TOP");
+speedwalkingFrame.panel.buttonText["SpeedwalkingTrueTimerText"]:ClearAllPoints();
+speedwalkingFrame.panel.buttonText["SpeedwalkingTrueTimerText"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 30, -50);
+speedwalkingFrame.panel.buttonText["SpeedwalkingTrueTimerText"]:SetText("True Timer (MS Display and more accurate CM Timer)");
+
+speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"] = CreateFrame("CheckButton", "SpeedwalkingTrueTimerButton", speedwalkingFrame.panel, "OptionsCheckButtonTemplate");
+speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 5, -40);
+speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetText("True Timer (MS Display and more accurate CM Timer)");
+speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetChecked(true);
+speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleTrueTimer() end);
+
+speedwalkingFrame.panel.buttonText["SpeedwalkingCompetitiveText"] = speedwalkingFrame.panel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.panel.buttonText["SpeedwalkingCompetitiveText"]:SetFontObject(GameFontWhite);
+speedwalkingFrame.panel.buttonText["SpeedwalkingCompetitiveText"]:SetJustifyH("LEFT");
+speedwalkingFrame.panel.buttonText["SpeedwalkingCompetitiveText"]:SetJustifyV("TOP");
+speedwalkingFrame.panel.buttonText["SpeedwalkingCompetitiveText"]:ClearAllPoints();
+speedwalkingFrame.panel.buttonText["SpeedwalkingCompetitiveText"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 30, -70);
+speedwalkingFrame.panel.buttonText["SpeedwalkingCompetitiveText"]:SetText("Competitive Mode (Beta Feature)");
+
+speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"] = CreateFrame("CheckButton", "SpeedwalkingCompetitiveButton", speedwalkingFrame.panel, "OptionsCheckButtonTemplate");
+speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 5, -60);
+speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetText("Competitive Mode (Beta Feature)");
+speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(false);
+speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCompetitive() end);
+
 InterfaceOptions_AddCategory(speedwalkingFrame.panel);
 
 -- Manage Events
@@ -427,22 +569,12 @@ speedwalkingFrame:SetScript("OnUpdate", speedwalkingFrame.updateInfo);
 SLASH_SPEEDWALKING1, SLASH_SPEEDWALKING2 = '/speedwalking', '/sw';
 local function handler(msg, editbox)
   if (msg == 'lock') then
-    -- Variable Toggle Goes Here
-    local string = "";
-    if (speedwalkingFrame.unlocked == true) then
-      speedwalkingFrame.unlocked = false;
-      string = "Speedwalking - Frame Locked";
-    else
-      speedwalkingFrame.unlocked = true;
-      string = "Speedwalking - Frame Unlocked";
-    end
-    speedwalkingFrame:SetMovable(speedwalkingFrame.unlocked);
-    speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
-    print(string);
+    speedwalkingFrame.toggleLock();
   elseif (msg == "reset") then
     speedwalkingVars["anchor"] = "RIGHT";
     speedwalkingVars["xOffset"] = 0;
     speedwalkingVars["yOffset"] = 0;
+    speedwalkingVars["trueTimer"] = true;
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint("RIGHT", 0, 0);
     print("Speedwalking - Frame Position Reset");
