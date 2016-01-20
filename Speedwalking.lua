@@ -314,10 +314,21 @@ speedwalkingFrame.toggleGoldTimer = function()
   speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetChecked(speedwalkingFrame.goldTimer);
 end
 
+speedwalkingFrame.toggleCMTimer = function()
+  if (speedwalkingFrame.cms == true) then
+    speedwalkingFrame.cms = false;
+  else
+    speedwalkingFrame.cms = true;
+  end
+  speedwalkingVars["cmTimer"] = speedwalkingFrame.cms;
+  speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(speedwalkingFrame.cms);
+end
+
 speedwalkingFrame.setupAddonPanel = function()
   speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetChecked(speedwalkingVars["trueTimer"]);
   speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(speedwalkingVars["competitive"]);
   speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetChecked(speedwalkingVars["goldTimer"]);
+    speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(speedwalkingVars["cmTimer"]);
 end
 
 local function eventHandler(self, event, ...)
@@ -330,12 +341,14 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["trueTimer"] = true;
       speedwalkingVars["competitive"] = false;
       speedwalkingVars["goldTimer"] = true;
+      speedwalkingVars["cmTimer"] = true;
     end
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
     speedwalkingFrame.trueTimer = speedwalkingVars["trueTimer"];
     speedwalkingFrame.competitive = speedwalkingVars["competitive"];
     speedwalkingFrame.goldTimer = speedwalkingVars["goldTimer"];
+    speedwalkingFrame.cms = speedwalkingVars["cmTimer"];
     speedwalkingFrame.setupAddonPanel();
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
@@ -409,7 +422,7 @@ speedwalkingFrame.trueTimer = true;
 speedwalkingFrame.goldTimer = true;
 speedwalkingFrame.competitive = true;
 speedwalkingFrame.timewalking = true;
-speedwalkingFrame.cms = true;
+speedwalkingFrame.cms = false;
 speedwalkingFrame.unlocked = false;
 speedwalkingDungeonInfo = {};
 -- Cataclysm Dungeons
@@ -514,6 +527,70 @@ speedwalkingDungeonInfo[1195]["startingArea"] = {};
 speedwalkingDungeonInfo[1195]["startingArea"]["x"] = 0;
 speedwalkingDungeonInfo[1195]["startingArea"]["y"] = 0;
 speedwalkingDungeonInfo[1195]["startingArea"]["safeZone"] = 0;
+speedwalkingDungeonInfo[1208] = {};
+speedwalkingDungeonInfo[1208]["name"] = "Grimrail Depot";
+speedwalkingDungeonInfo[1208]["enemies"] = 999;
+speedwalkingDungeonInfo[1208]["goldTimer"] = 870;
+speedwalkingDungeonInfo[1208]["mobs"] = {};
+speedwalkingDungeonInfo[1208]["startingArea"] = {};
+speedwalkingDungeonInfo[1208]["startingArea"]["x"] = 0;
+speedwalkingDungeonInfo[1208]["startingArea"]["y"] = 0;
+speedwalkingDungeonInfo[1208]["startingArea"]["safeZone"] = 0;
+speedwalkingDungeonInfo[1279] = {};
+speedwalkingDungeonInfo[1279]["name"] = "The Everbloom";
+speedwalkingDungeonInfo[1279]["enemies"] = 999;
+speedwalkingDungeonInfo[1279]["goldTimer"] = 1050;
+speedwalkingDungeonInfo[1279]["mobs"] = {};
+speedwalkingDungeonInfo[1279]["startingArea"] = {};
+speedwalkingDungeonInfo[1279]["startingArea"]["x"] = 0;
+speedwalkingDungeonInfo[1279]["startingArea"]["y"] = 0;
+speedwalkingDungeonInfo[1279]["startingArea"]["safeZone"] = 0;
+speedwalkingDungeonInfo[1175] = {};
+speedwalkingDungeonInfo[1175]["name"] = "Bloodmaul Slag Mines";
+speedwalkingDungeonInfo[1175]["enemies"] = 999;
+speedwalkingDungeonInfo[1175]["goldTimer"] = 1320;
+speedwalkingDungeonInfo[1175]["mobs"] = {};
+speedwalkingDungeonInfo[1175]["startingArea"] = {};
+speedwalkingDungeonInfo[1175]["startingArea"]["x"] = 0;
+speedwalkingDungeonInfo[1175]["startingArea"]["y"] = 0;
+speedwalkingDungeonInfo[1175]["startingArea"]["safeZone"] = 0;
+speedwalkingDungeonInfo[1182] = {};
+speedwalkingDungeonInfo[1182]["name"] = "Auchindoun";
+speedwalkingDungeonInfo[1182]["enemies"] = 999;
+speedwalkingDungeonInfo[1182]["goldTimer"] = 1140;
+speedwalkingDungeonInfo[1182]["mobs"] = {};
+speedwalkingDungeonInfo[1182]["startingArea"] = {};
+speedwalkingDungeonInfo[1182]["startingArea"]["x"] = 0;
+speedwalkingDungeonInfo[1182]["startingArea"]["y"] = 0;
+speedwalkingDungeonInfo[1182]["startingArea"]["safeZone"] = 0;
+speedwalkingDungeonInfo[1209] = {};
+speedwalkingDungeonInfo[1209]["name"] = "Skyreach";
+speedwalkingDungeonInfo[1209]["enemies"] = 999;
+speedwalkingDungeonInfo[1209]["goldTimer"] = 1020;
+speedwalkingDungeonInfo[1209]["mobs"] = {};
+speedwalkingDungeonInfo[1209]["startingArea"] = {};
+speedwalkingDungeonInfo[1209]["startingArea"]["x"] = 0;
+speedwalkingDungeonInfo[1209]["startingArea"]["y"] = 0;
+speedwalkingDungeonInfo[1209]["startingArea"]["safeZone"] = 0;
+speedwalkingDungeonInfo[1176] = {};
+speedwalkingDungeonInfo[1176]["name"] = "Shadowmoon Burial Grounds";
+speedwalkingDungeonInfo[1176]["enemies"] = 999;
+speedwalkingDungeonInfo[1176]["goldTimer"] = 1050;
+speedwalkingDungeonInfo[1176]["mobs"] = {};
+speedwalkingDungeonInfo[1176]["startingArea"] = {};
+speedwalkingDungeonInfo[1176]["startingArea"]["x"] = 0;
+speedwalkingDungeonInfo[1176]["startingArea"]["y"] = 0;
+speedwalkingDungeonInfo[1176]["startingArea"]["safeZone"] = 0;
+speedwalkingDungeonInfo[1358] = {};
+speedwalkingDungeonInfo[1358]["name"] = "Upper Blackrock Spire";
+speedwalkingDungeonInfo[1358]["enemies"] = 999;
+speedwalkingDungeonInfo[1358]["goldTimer"] = 1500;
+speedwalkingDungeonInfo[1358]["mobs"] = {};
+speedwalkingDungeonInfo[1358]["startingArea"] = {};
+speedwalkingDungeonInfo[1358]["startingArea"]["x"] = 0;
+speedwalkingDungeonInfo[1358]["startingArea"]["y"] = 0;
+speedwalkingDungeonInfo[1358]["startingArea"]["safeZone"] = 0;
+
 speedwalkingFrame.speedwalkingDungeonInfo = speedwalkingDungeonInfo;
 
 -- Register Textures
@@ -663,6 +740,20 @@ speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetText("Gold Tim
 speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetChecked(true);
 speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleGoldTimer() end);
 
+speedwalkingFrame.panel.buttonText["SpeedwalkingCMTimerText"] = speedwalkingFrame.panel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.panel.buttonText["SpeedwalkingCMTimerText"]:SetFontObject(GameFontWhite);
+speedwalkingFrame.panel.buttonText["SpeedwalkingCMTimerText"]:SetJustifyH("LEFT");
+speedwalkingFrame.panel.buttonText["SpeedwalkingCMTimerText"]:SetJustifyV("TOP");
+speedwalkingFrame.panel.buttonText["SpeedwalkingCMTimerText"]:ClearAllPoints();
+speedwalkingFrame.panel.buttonText["SpeedwalkingCMTimerText"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 30, -110);
+speedwalkingFrame.panel.buttonText["SpeedwalkingCMTimerText"]:SetText("CM Timer");
+
+speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"] = CreateFrame("CheckButton", "SpeedwalkingCMTimerButton", speedwalkingFrame.panel, "OptionsCheckButtonTemplate");
+speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 5, -100);
+speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetText("CM Timer");
+speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(false);
+speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCMTimer() end);
+
 InterfaceOptions_AddCategory(speedwalkingFrame.panel);
 
 -- Manage Events
@@ -681,6 +772,7 @@ local function handler(msg, editbox)
     speedwalkingVars["trueTimer"] = true;
     speedwalkingVars["competitive"] = false;
     speedwalkingVars["goldTimer"] = true;
+    speedwalkingVars["cmTimer"] = false;
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint("RIGHT", 0, 0);
     print("Speedwalking - Frame Position Reset");
