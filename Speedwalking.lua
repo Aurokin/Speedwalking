@@ -414,6 +414,11 @@ speedwalkingObjectiveFrame.texture:SetTexture(0, 1, 0, 0);
 --frame.texture:SetAllPoints(frame)
 --frame.texture:SetTexture(0.5, 0.5, 0.5, 0.5);
 
+-- Interface Panel
+speedwalkingFrame.panel = CreateFrame("Frame", "SpeedwalkingPanel", UIParent);
+speedwalkingFrame.panel.name = "Speedwalking";
+InterfaceOptions_AddCategory(speedwalkingFrame.panel);
+
 -- Manage Events
 speedwalkingFrame:SetScript("OnEvent", eventHandler);
 speedwalkingFrame:SetScript("OnUpdate", speedwalkingFrame.updateInfo);
@@ -445,6 +450,9 @@ local function handler(msg, editbox)
     print("Speedwalking - For Your Go Fast Timewalking Needs");
     print("Toggle Lock -  /sw lock");
     print("Reset Frame Position - /sw reset");
+    -- Workaround to make it open to this panel on the first time
+    InterfaceOptionsFrame_OpenToCategory(speedwalkingFrame.panel);
+    InterfaceOptionsFrame_OpenToCategory(speedwalkingFrame.panel);
   end
 end
 SlashCmdList["SPEEDWALKING"] = handler;
