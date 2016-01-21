@@ -302,7 +302,7 @@ speedwalkingFrame.toggleLock = function()
   end
   speedwalkingFrame:SetMovable(speedwalkingFrame.unlocked);
   speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
-  print(string);
+  -- print(string);
 end
 
 speedwalkingFrame.toggleCompetitive = function()
@@ -793,9 +793,7 @@ speedwalkingFrame:SetScript("OnUpdate", speedwalkingFrame.updateInfo);
 -- Slash Command Setup
 SLASH_SPEEDWALKING1, SLASH_SPEEDWALKING2 = '/speedwalking', '/sw';
 local function handler(msg, editbox)
-  if (msg == 'lock') then
-    speedwalkingFrame.toggleLock();
-  elseif (msg == "reset") then
+  if (msg == "reset") then
     speedwalkingVars["anchor"] = "RIGHT";
     speedwalkingVars["xOffset"] = 0;
     speedwalkingVars["yOffset"] = 0;
@@ -808,7 +806,6 @@ local function handler(msg, editbox)
     print("Speedwalking - Frame Position Reset");
   else
     print("Speedwalking - For Your Go Fast Timewalking Needs");
-    print("Toggle Lock -  /sw lock");
     print("Reset Frame Position - /sw reset");
     -- Workaround to make it open to this panel on the first time
     InterfaceOptionsFrame_OpenToCategory(speedwalkingFrame.panel);
