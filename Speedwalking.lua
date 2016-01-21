@@ -346,11 +346,40 @@ speedwalkingFrame.toggleCMTimer = function()
   speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(speedwalkingFrame.cms);
 end
 
+speedwalkingFrame.toggleTimewalkingTimer = function()
+  if (speedwalkingFrame.timewalking == true) then
+    speedwalkingFrame.timewalking = false;
+  else
+    speedwalkingFrame.timewalking = true;
+    -- speedwalkingFrame.setupCM();
+    speedwalkingFrame.enableTW();
+  end
+  speedwalkingVars["timewalkingTimer"] = speedwalkingFrame.timewalking;
+  speedwalkingFrame.panel.buttons["SpeedwalkingTimewalkingTimerButton"]:SetChecked(speedwalkingFrame.timewalking);
+end
+
 speedwalkingFrame.setupAddonPanel = function()
   speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetChecked(speedwalkingVars["trueTimer"]);
   speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(speedwalkingVars["competitive"]);
   speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetChecked(speedwalkingVars["goldTimer"]);
-    speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(speedwalkingVars["cmTimer"]);
+  speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(speedwalkingVars["cmTimer"]);
+  speedwalkingFrame.panel.buttons["SpeedwalkingTimewalkingTimerButton"]:SetChecked(speedwalkingVars["timewalkingTimer"]);
+end
+
+speedwalkingFrame.enableTW = function()
+  local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
+  -- Difficulty 1 is Normal, 2 is Heroic, 8 is CM, 24 is Timewalker
+  if (speedwalkingDungeonInfo[currentZoneID] and difficulty == 1) then
+    speedwalkingFrame.wipeTables();
+    speedwalkingFrame.setupTW(currentZoneID);
+    speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
+    -- Late Starts Don't Need An Update
+    -- speedwalkingFrame.currentTW["firstUpdate"] = speedwalkingFrame.currentTW["lateStart"];
+    speedwalkingFrame.showFrames();
+    speedwalkingFrame.inTW = true;
+    speedwalkingFrame.inCM = false;
+    speedwalkingFrame.updateInfo();
+  end
 end
 
 speedwalkingFrame.setupCM = function()
@@ -378,6 +407,7 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["competitive"] = false;
       speedwalkingVars["goldTimer"] = true;
       speedwalkingVars["cmTimer"] = true;
+      speedwalkingVars["timewalkingTimer"] = true;
     end
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
@@ -385,6 +415,7 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.competitive = speedwalkingVars["competitive"];
     speedwalkingFrame.goldTimer = speedwalkingVars["goldTimer"];
     speedwalkingFrame.cms = speedwalkingVars["cmTimer"];
+    speedwalkingFrame.timewalking = speedwalkingVars["timewalkingTimer"];
     speedwalkingFrame.setupAddonPanel();
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
@@ -781,8 +812,22 @@ speedwalkingFrame.panel.buttonText["SpeedwalkingCMTimerText"]:SetText("CM Timer"
 speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"] = CreateFrame("CheckButton", "SpeedwalkingCMTimerButton", speedwalkingFrame.panel, "OptionsCheckButtonTemplate");
 speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 5, -100);
 speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetText("CM Timer");
-speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(false);
+speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(true);
 speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCMTimer() end);
+
+speedwalkingFrame.panel.buttonText["SpeedwalkingTimewalkingTimerText"] = speedwalkingFrame.panel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.panel.buttonText["SpeedwalkingTimewalkingTimerText"]:SetFontObject(GameFontWhite);
+speedwalkingFrame.panel.buttonText["SpeedwalkingTimewalkingTimerText"]:SetJustifyH("LEFT");
+speedwalkingFrame.panel.buttonText["SpeedwalkingTimewalkingTimerText"]:SetJustifyV("TOP");
+speedwalkingFrame.panel.buttonText["SpeedwalkingTimewalkingTimerText"]:ClearAllPoints();
+speedwalkingFrame.panel.buttonText["SpeedwalkingTimewalkingTimerText"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 30, -130);
+speedwalkingFrame.panel.buttonText["SpeedwalkingTimewalkingTimerText"]:SetText("Timewalking Timer");
+
+speedwalkingFrame.panel.buttons["SpeedwalkingTimewalkingTimerButton"] = CreateFrame("CheckButton", "SpeedwalkingTimewalkingTimerButton", speedwalkingFrame.panel, "OptionsCheckButtonTemplate");
+speedwalkingFrame.panel.buttons["SpeedwalkingTimewalkingTimerButton"]:SetPoint("TOPLEFT", speedwalkingFrame.panel, "TOPLEFT", 5, -120);
+speedwalkingFrame.panel.buttons["SpeedwalkingTimewalkingTimerButton"]:SetText("Timewalking Timer");
+speedwalkingFrame.panel.buttons["SpeedwalkingTimewalkingTimerButton"]:SetChecked(true);
+speedwalkingFrame.panel.buttons["SpeedwalkingTimewalkingTimerButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleTimewalkingTimer() end);
 
 InterfaceOptions_AddCategory(speedwalkingFrame.panel);
 
@@ -800,7 +845,8 @@ local function handler(msg, editbox)
     speedwalkingVars["trueTimer"] = true;
     speedwalkingVars["competitive"] = false;
     speedwalkingVars["goldTimer"] = true;
-    speedwalkingVars["cmTimer"] = false;
+    speedwalkingVars["cmTimer"] = true;
+    speedwalkingVars["timewalkingTimer"] = true;
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint("RIGHT", 0, 0);
     print("Speedwalking - Frame Position Reset");
