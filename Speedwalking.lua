@@ -247,6 +247,26 @@ speedwalkingFrame.inProgressScan = function(currentZoneID)
   end
 end
 
+speedwalkingFrame.resizeFrame = function()
+  local width;
+  local minWidth = speedwalkingFrame.minWidth;
+  local timerWidth = speedwalkingTimerFrame.font:GetStringWidth();
+  local objectiveWidth = speedwalkingObjectiveFrame.font:GetStringWidth();
+  if (minWidth >= timerWidth and minWidth >= objectiveWidth) then
+    -- minWidth
+    width = minWidth;
+  elseif (timerWidth >= minWidth and timerWidth >= objectiveWidth) then
+    -- Timer Width
+    width = timerWidth;
+  else
+    -- Objective Width
+    width = objectiveWidth
+  end
+  speedwalkingObjectiveFrame:SetWidth(width);
+  speedwalkingTimerFrame:SetWidth(width);
+  speedwalkingFrame:SetWidth(width);
+end
+
 speedwalkingFrame.updateInfo = function()
   if (speedwalkingFrame.currentTW) then
     local startTime = speedwalkingFrame.currentTW["startTime"];
@@ -264,6 +284,7 @@ speedwalkingFrame.updateInfo = function()
     -- Objective Text
     local objectiveText = speedwalkingFrame.speedwalkingObjectiveText();
     speedwalkingObjectiveFrame.font:SetText(objectiveText);
+    speedwalkingFrame.resizeFrame();
   end
 end
 
@@ -424,6 +445,7 @@ speedwalkingFrame.competitive = true;
 speedwalkingFrame.timewalking = true;
 speedwalkingFrame.cms = false;
 speedwalkingFrame.unlocked = false;
+speedwalkingFrame.minWidth = 200;
 speedwalkingDungeonInfo = {};
 -- Cataclysm Dungeons
 speedwalkingDungeonInfo[670] = {};
@@ -610,13 +632,13 @@ speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_RESET");
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
-speedwalkingFrame:SetWidth(400);
+speedwalkingFrame:SetWidth(speedwalkingFrame.minWidth);
 speedwalkingFrame:SetPoint("RIGHT", 0, 0);
 speedwalkingTimerFrame:SetHeight(40);
-speedwalkingTimerFrame:SetWidth(400);
+speedwalkingTimerFrame:SetWidth(speedwalkingFrame.minWidth);
 speedwalkingTimerFrame:SetPoint("TOP", 0, 0);
 speedwalkingObjectiveFrame:SetHeight(200);
-speedwalkingObjectiveFrame:SetWidth(400);
+speedwalkingObjectiveFrame:SetWidth(speedwalkingFrame.minWidth);
 speedwalkingObjectiveFrame:SetPoint("TOP", 0, -40);
 speedwalkingFrame:SetMovable(speedwalkingFrame.unlocked);
 speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
@@ -646,7 +668,7 @@ end);
 
 -- Set Font Settings
 speedwalkingTimerFrame.font:SetAllPoints(true);
-speedwalkingTimerFrame.font:SetJustifyH("LEFT");
+speedwalkingTimerFrame.font:SetJustifyH("CENTER");
 speedwalkingTimerFrame.font:SetJustifyV("BOTTOM");
 speedwalkingTimerFrame.font:SetFont("Interface\\Addons\\Speedwalking\\MyriadCondensedWeb.ttf", 29, "OUTLINE");
 speedwalkingTimerFrame.font:SetTextColor(1, 1, 1, 1);
