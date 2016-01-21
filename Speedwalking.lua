@@ -429,7 +429,7 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.wipeTables();
     speedwalkingFrame.setupTW(currentZoneID);
     speedwalkingFrame.updateInfo();
-  elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and speedwalkingFrame.inTW == true and speedwalkingFrame.currentTW and speedwalkingFrame.competitive == true then
+  elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and speedwalkingFrame.inTW == true and speedwalkingFrame.currentTW then
     if speedwalkingFrame.currentTW["enemies"] < speedwalkingFrame.currentTW["totalEnemies"] then
       local encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName = ...;
       if (msg == "UNIT_DIED" and speedwalkingDungeonInfo[speedwalkingFrame.currentTW["zoneID"]]["mobs"][destName]) then

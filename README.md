@@ -13,4 +13,4 @@ For Your Go Fast Timewalking Needs
 8a) Live Split Option (Shows Splits Of Best Run)  
 9) Timewalking, Support Optional Bosses For Competitive Mode  
 10) Localize For Multiple Languages  
-11) Have Competitive Mode Count Mobs When Disabled (Then if user enables mid run mob count will be present, also better for AddOn Communication)
+11) ~~Have Competitive Mode Count Mobs When Disabled (Then if user enables mid run mob count will be present, also better for AddOn Communication)~~  
