@@ -338,6 +338,7 @@ end
 speedwalkingFrame.toggleCMTimer = function()
   if (speedwalkingFrame.cms == true) then
     speedwalkingFrame.cms = false;
+    speedwalkingFrame.wipeCM();
   else
     speedwalkingFrame.cms = true;
     speedwalkingFrame.setupCM();
@@ -349,6 +350,7 @@ end
 speedwalkingFrame.toggleTimewalkingTimer = function()
   if (speedwalkingFrame.timewalking == true) then
     speedwalkingFrame.timewalking = false;
+    speedwalkingFrame.wipeTW();
   else
     speedwalkingFrame.timewalking = true;
     -- speedwalkingFrame.setupCM();
@@ -369,7 +371,7 @@ end
 speedwalkingFrame.enableTW = function()
   local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
   -- Difficulty 1 is Normal, 2 is Heroic, 8 is CM, 24 is Timewalker
-  if (speedwalkingDungeonInfo[currentZoneID] and difficulty == 1) then
+  if (speedwalkingDungeonInfo[currentZoneID] and difficulty == speedwalkingFrame.twDifficulty) then
     speedwalkingFrame.wipeTables();
     speedwalkingFrame.setupTW(currentZoneID);
     speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
@@ -379,6 +381,15 @@ speedwalkingFrame.enableTW = function()
     speedwalkingFrame.inTW = true;
     speedwalkingFrame.inCM = false;
     speedwalkingFrame.updateInfo();
+  end
+end
+
+speedwalkingFrame.wipeTW = function()
+  local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
+  if (speedwalkingDungeonInfo[currentZoneID] and difficulty == speedwalkingFrame.twDifficulty) then
+    speedwalkingFrame.inTW = false;
+    speedwalkingFrame.inCM = false;
+    speedwalkingFrame.hideFrames();
   end
 end
 
@@ -393,6 +404,15 @@ speedwalkingFrame.setupCM = function()
     speedwalkingFrame.inTW = false;
     speedwalkingFrame.inCM = true;
     speedwalkingFrame.updateInfo();
+  end
+end
+
+speedwalkingFrame.wipeCM = function()
+  local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
+  if (speedwalkingDungeonInfo[currentZoneID] and difficulty == 8) then
+    speedwalkingFrame.inTW = false;
+    speedwalkingFrame.inCM = false;
+    speedwalkingFrame.hideFrames();
   end
 end
 
@@ -422,17 +442,8 @@ local function eventHandler(self, event, ...)
   elseif event == "PLAYER_ENTERING_WORLD" then
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
     if (speedwalkingDungeonInfo and currentZoneID) then
-      if (speedwalkingDungeonInfo[currentZoneID] and difficulty == 1 and speedwalkingFrame.timewalking == true) then
-        -- Difficulty 1 is Normal, 2 is Heroic, 8 is CM, 24 is Timewalker
-        speedwalkingFrame.wipeTables();
-        speedwalkingFrame.setupTW(currentZoneID);
-        speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
-        -- Late Starts Don't Need An Update
-        -- speedwalkingFrame.currentTW["firstUpdate"] = speedwalkingFrame.currentTW["lateStart"];
-        speedwalkingFrame.showFrames();
-        speedwalkingFrame.inTW = true;
-        speedwalkingFrame.inCM = false;
-        speedwalkingFrame.updateInfo();
+      if (speedwalkingDungeonInfo[currentZoneID] and difficulty == speedwalkingFrame.twDifficulty and speedwalkingFrame.timewalking == true) then
+        speedwalkingFrame.enableTW();
       elseif (speedwalkingDungeonInfo[currentZoneID] and difficulty == 8 and speedwalkingFrame.cms == true) then
         speedwalkingFrame.setupCM();
       else
@@ -485,6 +496,7 @@ speedwalkingFrame.timewalking = true;
 speedwalkingFrame.cms = false;
 speedwalkingFrame.unlocked = false;
 speedwalkingFrame.minWidth = 200;
+speedwalkingFrame.twDifficulty = 1;
 speedwalkingDungeonInfo = {};
 -- Cataclysm Dungeons
 speedwalkingDungeonInfo[670] = {};
