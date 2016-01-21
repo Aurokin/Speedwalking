@@ -340,6 +340,7 @@ speedwalkingFrame.toggleCMTimer = function()
     speedwalkingFrame.cms = false;
   else
     speedwalkingFrame.cms = true;
+    speedwalkingFrame.setupCM();
   end
   speedwalkingVars["cmTimer"] = speedwalkingFrame.cms;
   speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(speedwalkingFrame.cms);
@@ -350,6 +351,20 @@ speedwalkingFrame.setupAddonPanel = function()
   speedwalkingFrame.panel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(speedwalkingVars["competitive"]);
   speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetChecked(speedwalkingVars["goldTimer"]);
     speedwalkingFrame.panel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(speedwalkingVars["cmTimer"]);
+end
+
+speedwalkingFrame.setupCM = function()
+  local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
+  if (speedwalkingDungeonInfo[currentZoneID] and difficulty == 8) then
+    speedwalkingFrame.wipeTables();
+    speedwalkingFrame.setupTW(currentZoneID);
+    ObjectiveTrackerFrame:SetScript("OnEvent", nil);
+    ObjectiveTrackerFrame:Hide();
+    speedwalkingFrame.showFrames();
+    speedwalkingFrame.inTW = false;
+    speedwalkingFrame.inCM = true;
+    speedwalkingFrame.updateInfo();
+  end
 end
 
 local function eventHandler(self, event, ...)
@@ -388,14 +403,7 @@ local function eventHandler(self, event, ...)
         speedwalkingFrame.inCM = false;
         speedwalkingFrame.updateInfo();
       elseif (speedwalkingDungeonInfo[currentZoneID] and difficulty == 8 and speedwalkingFrame.cms == true) then
-        speedwalkingFrame.wipeTables();
-        speedwalkingFrame.setupTW(currentZoneID);
-        ObjectiveTrackerFrame:SetScript("OnEvent", nil);
-        ObjectiveTrackerFrame:Hide();
-        speedwalkingFrame.showFrames();
-        speedwalkingFrame.inTW = false;
-        speedwalkingFrame.inCM = true;
-        speedwalkingFrame.updateInfo();
+        speedwalkingFrame.setupCM();
       else
         speedwalkingFrame.inTW = false;
         speedwalkingFrame.inCM = false;
