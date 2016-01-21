@@ -3,7 +3,7 @@ For Your Go Fast Timewalking Needs
 
 # To Do List
 1) ~~Activating CM Timer Takes Reload When Inside CM~~  
-2) Add Option To Disable Timewalkers  
+2) ~~Add Option To Disable Timewalkers~~  
 3) Use Part Of GUID To Identify Mobs Rather Than Name  
 4) ~~Frame Auto-Resizing~~  
 5) Font Size / Type / Alignment / Offset Customization  
