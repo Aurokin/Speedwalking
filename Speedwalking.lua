@@ -462,10 +462,6 @@ local function eventHandler(self, event, ...)
     -- print(prefix);
     if (prefix == speedwalkingFrame.prefix) then
       -- Parse message
-      local msg = split(message, ":")[1];
-      if (msg == "Mob") then
-        --print(message);
-      -- print(prefix .. " " .. message .. " " .. sender);
       local msg = split(message, ":");
       if (msg[1] == "Mob") then
         if speedwalkingFrame.currentTW then
