@@ -428,7 +428,7 @@ speedwalkingFrame.sendMob = function(guid)
     local msg = "Mob:" .. guid;
     SendAddonMessage(speedwalkingFrame.prefix, msg, "RAID");
   else
-    local msg = "MobTimestamp:" .. guid..":"..GetTime();
+    local msg = "MobTimestamp:" .. guid..":"..GetTime()-speedwalkingFrame.currentTW["startTime"];
     SendAddonMessage(speedwalkingFrame.prefix, msg, "RAID");
   end
   
@@ -486,7 +486,9 @@ local function eventHandler(self, event, ...)
           end
         end
       end
-	  if (msg[1] == "MobTimestamp") then
+      if (msg[1] == "MobTimestamp") then
+        
+        print("timestamp: "..msg[3].." "..msg[2])
         if speedwalkingFrame.currentTW then
           if speedwalkingFrame.resyncTable[msg[2]] then
             local timerSnapshot = tonumber(msg[3]);
