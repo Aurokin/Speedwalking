@@ -462,11 +462,9 @@ local function eventHandler(self, event, ...)
     -- print(prefix);
     if (prefix == speedwalkingFrame.prefix) then
       -- Parse message
-<<<<<<< HEAD
       local msg = split(message, ":")[1];
       if (msg == "Mob") then
         --print(message);
-=======
       -- print(prefix .. " " .. message .. " " .. sender);
       local msg = split(message, ":");
       if (msg[1] == "Mob") then
@@ -476,7 +474,6 @@ local function eventHandler(self, event, ...)
             -- print(message);
           end
         end
->>>>>>> a190363dd3ffb1486f43f93fddc77501282baf1c
       end
     end
   elseif event == "PLAYER_ENTERING_WORLD" then
