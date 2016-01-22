@@ -194,6 +194,7 @@ speedwalkingFrame.setupTW = function(currentZoneID)
   speedwalkingFrame.currentTW["enemies"] = 0;
   speedwalkingFrame.currentTW["totalEnemies"] = speedwalkingFrame.speedwalkingDungeonInfo[currentZoneID]["enemies"];
   speedwalkingFrame.currentTW["enemiesTime"] = nil;
+  speedwalkingFrame.currentTW["enemyList"] = {};
   speedwalkingFrame.fillTables(steps);
 end
 
@@ -417,7 +418,8 @@ speedwalkingFrame.wipeCM = function()
 end
 
 speedwalkingFrame.sendMob = function(guid)
-
+  local msg = "Mob:" .. guid;
+  SendAddonMessage(speedwalkingFrame.prefix, msg, "RAID");
 end
 
 speedwalkingFrame.sendCurrentTW = function()
@@ -449,9 +451,12 @@ local function eventHandler(self, event, ...)
     -- speedwalkingFrame.hideFrames();
   elseif event == "CHAT_MSG_ADDON" then
     local prefix, message, distribution, sender = ...;
-    if (prefix == "SPEEDWALKING") then
+    if (prefix == speedwalkingFrame.prefix) then
       -- Parse message
-
+      local msg = split(message, ":");
+      if (msg == "Mob") then
+        print(message);
+      end
     end
   elseif event == "PLAYER_ENTERING_WORLD" then
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
@@ -488,9 +493,11 @@ local function eventHandler(self, event, ...)
   elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and speedwalkingFrame.inTW == true and speedwalkingFrame.currentTW then
     if speedwalkingFrame.currentTW["enemies"] < speedwalkingFrame.currentTW["totalEnemies"] then
       local encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName = ...;
-      if (msg == "UNIT_DIED" and speedwalkingDungeonInfo[speedwalkingFrame.currentTW["zoneID"]]["mobs"][split(destGUID,"\-")[6]]) then
+      if (msg == "UNIT_DIED" and speedwalkingDungeonInfo[speedwalkingFrame.currentTW["zoneID"]]["mobs"][split(destGUID,"\-")[6]] and not speedwalkingFrame.enemyList[destGUID]) then
         print(destGUID .. " - " .. destName);
         speedwalkingFrame.currentTW["enemies"] = speedwalkingFrame.currentTW["enemies"] + 1;
+        speedwalkingFrame.enemyList[destGUID] = true;
+        speedwalkingFrame.sendMob(destGUID);
         if (speedwalkingFrame.currentTW["enemies"] == speedwalkingFrame.currentTW["totalEnemies"]) then
           speedwalkingFrame.currentTW["enemiesTime"] = string.format("|c%s%s|r", speedwalkingFrame.successColor, speedwalkingFrame.currentTW["time"]);
         end
@@ -511,6 +518,7 @@ speedwalkingFrame.cms = false;
 speedwalkingFrame.unlocked = false;
 speedwalkingFrame.minWidth = 200;
 speedwalkingFrame.twDifficulty = 1;
+speedwalkingFrame.prefix = "SPEEDWALKING"
 speedwalkingDungeonInfo = {};
 -- Cataclysm Dungeons
 speedwalkingDungeonInfo[670] = {};
@@ -688,7 +696,7 @@ speedwalkingObjectiveFrame.texture = speedwalkingObjectiveFrame:CreateTexture(ni
 speedwalkingTimerFrame.font = speedwalkingTimerFrame:CreateFontString(nil, "OVERLAY");
 speedwalkingObjectiveFrame.font = speedwalkingObjectiveFrame:CreateFontString(nil, "OVERLAY");
 
-RegisterAddonMessagePrefix("SPEEDWALKING");
+RegisterAddonMessagePrefix(speedwalkingFrame.prefix);
 -- Register Events
 speedwalkingFrame:RegisterEvent("ADDON_LOADED");
 speedwalkingFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
