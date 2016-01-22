@@ -426,6 +426,14 @@ speedwalkingFrame.sendCurrentTW = function()
 
 end
 
+speedwalkingFrame.addMobToList = function(destGUID)
+  speedwalkingFrame.currentTW["enemies"] = speedwalkingFrame.currentTW["enemies"] + 1;
+  speedwalkingFrame.currentTW["enemyList"][destGUID] = true;
+  if (speedwalkingFrame.currentTW["enemies"] == speedwalkingFrame.currentTW["totalEnemies"]) then
+    speedwalkingFrame.currentTW["enemiesTime"] = string.format("|c%s%s|r", speedwalkingFrame.successColor, speedwalkingFrame.currentTW["time"]);
+  end
+end
+
 local function eventHandler(self, event, ...)
   if event == "ADDON_LOADED" and ... == "Speedwalking" then
     if not speedwalkingVars then
@@ -451,11 +459,24 @@ local function eventHandler(self, event, ...)
     -- speedwalkingFrame.hideFrames();
   elseif event == "CHAT_MSG_ADDON" then
     local prefix, message, distribution, sender = ...;
+    -- print(prefix);
     if (prefix == speedwalkingFrame.prefix) then
       -- Parse message
+<<<<<<< HEAD
       local msg = split(message, ":")[1];
       if (msg == "Mob") then
         --print(message);
+=======
+      -- print(prefix .. " " .. message .. " " .. sender);
+      local msg = split(message, ":");
+      if (msg[1] == "Mob") then
+        if speedwalkingFrame.currentTW then
+          if not speedwalkingFrame.currentTW["enemyList"][msg[2]] then
+            speedwalkingFrame.addMobToList(msg[2]);
+            -- print(message);
+          end
+        end
+>>>>>>> a190363dd3ffb1486f43f93fddc77501282baf1c
       end
     end
   elseif event == "PLAYER_ENTERING_WORLD" then
@@ -498,9 +519,6 @@ local function eventHandler(self, event, ...)
         speedwalkingFrame.currentTW["enemies"] = speedwalkingFrame.currentTW["enemies"] + 1;
         speedwalkingFrame.currentTW["enemyList"][destGUID] = true;
         speedwalkingFrame.sendMob(destGUID);
-        if (speedwalkingFrame.currentTW["enemies"] == speedwalkingFrame.currentTW["totalEnemies"]) then
-          speedwalkingFrame.currentTW["enemiesTime"] = string.format("|c%s%s|r", speedwalkingFrame.successColor, speedwalkingFrame.currentTW["time"]);
-        end
       end
     end
   end
