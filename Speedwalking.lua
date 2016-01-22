@@ -426,6 +426,14 @@ speedwalkingFrame.sendCurrentTW = function()
 
 end
 
+speedwalkingFrame.addMobToList = function(destGUID)
+  speedwalkingFrame.currentTW["enemies"] = speedwalkingFrame.currentTW["enemies"] + 1;
+  speedwalkingFrame.currentTW["enemyList"][destGUID] = true;
+  if (speedwalkingFrame.currentTW["enemies"] == speedwalkingFrame.currentTW["totalEnemies"]) then
+    speedwalkingFrame.currentTW["enemiesTime"] = string.format("|c%s%s|r", speedwalkingFrame.successColor, speedwalkingFrame.currentTW["time"]);
+  end
+end
+
 local function eventHandler(self, event, ...)
   if event == "ADDON_LOADED" and ... == "Speedwalking" then
     if not speedwalkingVars then
@@ -451,11 +459,18 @@ local function eventHandler(self, event, ...)
     -- speedwalkingFrame.hideFrames();
   elseif event == "CHAT_MSG_ADDON" then
     local prefix, message, distribution, sender = ...;
+    -- print(prefix);
     if (prefix == speedwalkingFrame.prefix) then
       -- Parse message
+      -- print(prefix .. " " .. message .. " " .. sender);
       local msg = split(message, ":");
-      if (msg == "Mob") then
-        print(message);
+      if (msg[1] == "Mob") then
+        if speedwalkingFrame.currentTW then
+          if not speedwalkingFrame.currentTW["enemyList"][msg[2]] then
+            speedwalkingFrame.addMobToList(msg[2]);
+            -- print(message);
+          end
+        end
       end
     end
   elseif event == "PLAYER_ENTERING_WORLD" then
@@ -494,13 +509,9 @@ local function eventHandler(self, event, ...)
     if speedwalkingFrame.currentTW["enemies"] < speedwalkingFrame.currentTW["totalEnemies"] then
       local encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName = ...;
       if (msg == "UNIT_DIED" and speedwalkingDungeonInfo[speedwalkingFrame.currentTW["zoneID"]]["mobs"][split(destGUID,"\-")[6]] and not speedwalkingFrame.currentTW["enemyList"][destGUID]) then
-        print(destGUID .. " - " .. destName);
-        speedwalkingFrame.currentTW["enemies"] = speedwalkingFrame.currentTW["enemies"] + 1;
-        speedwalkingFrame.currentTW["enemyList"][destGUID] = true;
+        -- print(destGUID .. " - " .. destName);
+        speedwalkingFrame.addMobToList(destGUID);
         speedwalkingFrame.sendMob(destGUID);
-        if (speedwalkingFrame.currentTW["enemies"] == speedwalkingFrame.currentTW["totalEnemies"]) then
-          speedwalkingFrame.currentTW["enemiesTime"] = string.format("|c%s%s|r", speedwalkingFrame.successColor, speedwalkingFrame.currentTW["time"]);
-        end
       end
     end
   end
