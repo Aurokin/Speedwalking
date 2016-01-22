@@ -385,6 +385,7 @@ speedwalkingFrame.enableTW = function()
     speedwalkingFrame.inCM = false;
     speedwalkingFrame.updateInfo();
   end
+  speedwalkingFrame.resyncTable={};
 end
 
 speedwalkingFrame.wipeTW = function()
@@ -394,6 +395,7 @@ speedwalkingFrame.wipeTW = function()
     speedwalkingFrame.inCM = false;
     speedwalkingFrame.hideFrames();
   end
+  speedwalkingFrame.resyncTable={};
 end
 
 speedwalkingFrame.setupCM = function()
@@ -408,6 +410,7 @@ speedwalkingFrame.setupCM = function()
     speedwalkingFrame.inCM = true;
     speedwalkingFrame.updateInfo();
   end
+  speedwalkingFrame.resyncTable={};
 end
 
 speedwalkingFrame.wipeCM = function()
@@ -417,11 +420,18 @@ speedwalkingFrame.wipeCM = function()
     speedwalkingFrame.inCM = false;
     speedwalkingFrame.hideFrames();
   end
+  speedwalkingFrame.resyncTable={};
 end
 
 speedwalkingFrame.sendMob = function(guid)
-  local msg = "Mob:" .. guid;
-  SendAddonMessage(speedwalkingFrame.prefix, msg, "RAID");
+  if speedwalkingFrame.currentTW["lateStart"] then
+    local msg = "Mob:" .. guid;
+    SendAddonMessage(speedwalkingFrame.prefix, msg, "RAID");
+  else
+    local msg = "MobTimestamp:" .. guid..":"..GetTime();
+    SendAddonMessage(speedwalkingFrame.prefix, msg, "RAID");
+  end
+  
 end
 
 speedwalkingFrame.sendCurrentTW = function()
@@ -433,6 +443,9 @@ speedwalkingFrame.addMobToList = function(destGUID)
   speedwalkingFrame.currentTW["enemyList"][destGUID] = true;
   if (speedwalkingFrame.currentTW["enemies"] == speedwalkingFrame.currentTW["totalEnemies"]) then
     speedwalkingFrame.currentTW["enemiesTime"] = string.format("|c%s%s|r", speedwalkingFrame.successColor, speedwalkingFrame.currentTW["time"]);
+  end
+  if speedwalkingFrame.currentTW["lateStart"] then
+	speedwalkingFrame.resyncTable[destGUID]=GetTime();
   end
 end
 
@@ -465,11 +478,22 @@ local function eventHandler(self, event, ...)
     if (prefix == speedwalkingFrame.prefix) then
       -- Parse message
       local msg = split(message, ":");
-      if (msg[1] == "Mob") then
+      if (msg[1] == "Mob") or (msg[1] == "MobTimestamp") then
         if speedwalkingFrame.currentTW then
           if not speedwalkingFrame.currentTW["enemyList"][msg[2]] and string.format("%d", speedwalkingFrame.currentTW["zoneID"]) == split(msg[2],"\-")[4] then
             speedwalkingFrame.addMobToList(msg[2]);
             -- print(message);
+          end
+        end
+      end
+	  if (msg[1] == "MobTimestamp") then
+        if speedwalkingFrame.currentTW then
+          if speedwalkingFrame.resyncTable[msg[2]] then
+            local timerSnapshot = tonumber(msg[3]);
+            local newOffset = speedwalkingFrame.resyncTable[msg[2]]-timerSnapshot;
+            speedwalkingFrame.currentTW["startTime"]=newOffset;
+            speedwalkingFrame.currentTW["lateStart"]=false;
+            speedwalkingFrame.resyncTable={};
           end
         end
       end
@@ -531,6 +555,7 @@ speedwalkingFrame.unlocked = false;
 speedwalkingFrame.minWidth = 200;
 speedwalkingFrame.twDifficulty = 1;
 speedwalkingFrame.prefix = "SPEEDWALKING";
+speedwalkingFrame.resyncTable={};
 
 speedwalkingFrame.speedwalkingDungeonInfo = speedwalkingDungeonInfo;
 
