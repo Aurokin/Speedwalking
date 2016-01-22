@@ -74,6 +74,7 @@ speedwalkingFrame.speedwalkingTimerText = function(currentZoneID)
       end
     elseif ((not startTime or speedwalkingFrame.trueTimer == false) and speedwalkingFrame.inCM == true) then
       _, timeCM = GetWorldElapsedTime(1);
+      --ask for start time here
       startMin, startSec = speedwalkingFrame.secondsToTime(timeCM);
       startMin = speedwalkingFrame.formatTimeNoMS(startMin);
       startSec = speedwalkingFrame.formatTimeNoMS(startSec);
@@ -83,8 +84,9 @@ speedwalkingFrame.speedwalkingTimerText = function(currentZoneID)
     end
     string = startMin .. ":" .. startSec;
     speedwalkingFrame.currentTW["time"] = string;
+    string = string .. " ";
     if (speedwalkingFrame.goldTimer == true) then
-      string = string .. " / ";
+      string = string .. "/ ";
       string = string .. goldMin .. ":" .. goldSec;
     end
   end
