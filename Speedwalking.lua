@@ -416,6 +416,14 @@ speedwalkingFrame.wipeCM = function()
   end
 end
 
+speedwalkingFrame.sendMob = function(guid)
+
+end
+
+speedwalkingFrame.sendCurrentTW = function()
+
+end
+
 local function eventHandler(self, event, ...)
   if event == "ADDON_LOADED" and ... == "Speedwalking" then
     if not speedwalkingVars then
@@ -439,6 +447,12 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.setupAddonPanel();
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
+  elseif event == "CHAT_MSG_ADDON" then
+    local prefix, message, distribution, sender = ...;
+    if (prefix == "SPEEDWALKING") then
+      -- Parse message
+
+    end
   elseif event == "PLAYER_ENTERING_WORLD" then
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
     if (speedwalkingDungeonInfo and currentZoneID) then
@@ -680,6 +694,8 @@ speedwalkingObjectiveFrame.texture = speedwalkingObjectiveFrame:CreateTexture(ni
 -- Register Fonts
 speedwalkingTimerFrame.font = speedwalkingTimerFrame:CreateFontString(nil, "OVERLAY");
 speedwalkingObjectiveFrame.font = speedwalkingObjectiveFrame:CreateFontString(nil, "OVERLAY");
+
+RegisterAddonMessagePrefix("SPEEDWALKING");
 -- Register Events
 speedwalkingFrame:RegisterEvent("ADDON_LOADED");
 speedwalkingFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -687,6 +703,7 @@ speedwalkingFrame:RegisterEvent("SCENARIO_POI_UPDATE");
 speedwalkingFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
 speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_START");
 speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_RESET");
+speedwalkingFrame:RegisterEvent("CHAT_MSG_ADDON");
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
