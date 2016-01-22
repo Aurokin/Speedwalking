@@ -416,11 +416,11 @@ speedwalkingFrame.wipeCM = function()
   end
 end
 
-speedwalkingFrame.sendMob = function(guid) then
+speedwalkingFrame.sendMob = function(guid)
 
 end
 
-speedwalkingFrame.sendCurrentTW = function() then
+speedwalkingFrame.sendCurrentTW = function()
 
 end
 
@@ -696,7 +696,7 @@ speedwalkingFrame:RegisterEvent("SCENARIO_POI_UPDATE");
 speedwalkingFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
 speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_START");
 speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_RESET");
-speedwalkingFrame.RegisterEvent("CHAT_MSG_ADDON");
+speedwalkingFrame:RegisterEvent("CHAT_MSG_ADDON");
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
