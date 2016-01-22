@@ -2,4 +2,5 @@
 ## Title: Speedwalking
 ## Notes: CM Style Timer For Timewalking
 ## SavedVariables: speedwalkingVars
+InstanceInfo.lua
 Speedwalking.lua
