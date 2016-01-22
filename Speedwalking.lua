@@ -378,6 +378,10 @@ speedwalkingFrame.enableTW = function()
     speedwalkingFrame.wipeTables();
     speedwalkingFrame.setupTW(currentZoneID);
     speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
+    if speedwalkingFrame.currentTW["lateStart"] then
+      speedwalkingFrame.waitingForKillcount=true;
+      SendAddonMessage(speedwalkingFrame.prefix, "KillcountRequest", "RAID");
+    end
     -- Late Starts Don't Need An Update
     -- speedwalkingFrame.currentTW["firstUpdate"] = speedwalkingFrame.currentTW["lateStart"];
     speedwalkingFrame.showFrames();
@@ -487,8 +491,6 @@ local function eventHandler(self, event, ...)
         end
       end
       if (msg[1] == "MobTimestamp") then
-        
-        print("timestamp: "..msg[3].." "..msg[2])
         if speedwalkingFrame.currentTW then
           if speedwalkingFrame.resyncTable[msg[2]] then
             local timerSnapshot = tonumber(msg[3]);
@@ -498,6 +500,14 @@ local function eventHandler(self, event, ...)
             speedwalkingFrame.resyncTable={};
           end
         end
+      end
+      if (msg[1] == "KillcountRequest") then
+        local msg = "KillcountResponse:"..speedwalkingFrame.currentTW["enemies"];
+        SendAddonMessage(speedwalkingFrame.prefix, msg, "RAID");
+      end
+      if (msg[1] == "KillcountResponse") and speedwalkingFrame.waitingForKillcount then
+        speedwalkingFrame.waitingForKillcount=false;
+        speedwalkingFrame.currentTW["enemies"]=tonumber(msg[2]);
       end
     end
   elseif event == "PLAYER_ENTERING_WORLD" then
@@ -558,7 +568,7 @@ speedwalkingFrame.minWidth = 200;
 speedwalkingFrame.twDifficulty = 1;
 speedwalkingFrame.prefix = "SPEEDWALKING";
 speedwalkingFrame.resyncTable={};
-
+speedwalkingFrame.waitingForKillcount=false;
 speedwalkingFrame.speedwalkingDungeonInfo = speedwalkingDungeonInfo;
 
 -- Register Textures
@@ -787,4 +797,36 @@ function split(str, pat)
       table.insert(t, cap)
    end
    return t
+end
+
+local b_64='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+-- encoding
+function enc_64(data)
+    return ((data:gsub('.', function(x) 
+        local r,b='',x:byte()
+        for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
+        return r;
+    end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
+        if (#x < 6) then return '' end
+        local c=0
+        for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
+        return b:sub(c+1,c+1)
+    end)..({ '', '==', '=' })[#data%3+1])
+end
+
+-- decoding
+function dec_64(data)
+    data = string.gsub(data, '[^'..b..'=]', '')
+    return (data:gsub('.', function(x)
+        if (x == '=') then return '' end
+        local r,f='',(b:find(x)-1)
+        for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end
+        return r;
+    end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
+        if (#x ~= 8) then return '' end
+        local c=0
+        for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end
+        return string.char(c)
+    end))
 end
