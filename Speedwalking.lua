@@ -504,10 +504,9 @@ local function eventHandler(self, event, ...)
       end
       if (msg[1] == "KillcountRequest") and (not SpeedwalkingFrame.currentTW["lateStart"]) then
         local response = "KillcountResponse:"..speedwalkingFrame.currentTW["enemies"];
-        SendAddonMessage(speedwalkingFrame.prefix, msg, "RAID");
+        SendAddonMessage(speedwalkingFrame.prefix, response, "RAID");
       end
       if (msg[1] == "KillcountResponse") and speedwalkingFrame.waitingForKillcount then
-        print("Got KillcountResponse: "..msg)
         speedwalkingFrame.waitingForKillcount=false;
         speedwalkingFrame.currentTW["enemies"]=tonumber(msg[2]);
       end
