@@ -465,7 +465,7 @@ local function eventHandler(self, event, ...)
       local msg = split(message, ":");
       if (msg[1] == "Mob") then
         if speedwalkingFrame.currentTW then
-          if not speedwalkingFrame.currentTW["enemyList"][msg[2]] then
+          if not speedwalkingFrame.currentTW["enemyList"][msg[2]] and string.format("%d", speedwalkingFrame.currentTW["zoneID"]) == split(msg[2],"\-")[4] then
             speedwalkingFrame.addMobToList(msg[2]);
             -- print(message);
           end
