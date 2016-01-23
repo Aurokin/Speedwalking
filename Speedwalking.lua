@@ -474,6 +474,7 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.goldTimer = speedwalkingVars["goldTimer"];
     speedwalkingFrame.cms = speedwalkingVars["cmTimer"];
     speedwalkingFrame.timewalking = speedwalkingVars["timewalkingTimer"];
+    speedwalkingFrame.killCountIDs = killCountIDs;
     speedwalkingFrame.setupAddonPanel();
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
@@ -835,11 +836,18 @@ function dec_64(data)
     end))
 end
 
+
 speedwalkingFrame.addIDToTable = function()
     local name = UnitName("target");
     local guid = split(UnitGUID("target"),"-")[6];
     print(name .. ": " .. guid);
     speedwalkingFrame.killCountIDs[guid] = name;
+end
+speedwalkingFrame.removeIDFromTable = function()
+    local name = UnitName("target");
+    local guid = split(UnitGUID("target"),"-")[6];
+    print("Removed "..name .. ": " .. guid);
+    speedwalkingFrame.killCountIDs[guid] = nil;
 end
 
 speedwalkingFrame.clearIDTable = function()
