@@ -457,9 +457,12 @@ speedwalkingFrame.addMobToList = function(destGUID)
   end
 end
 
-speedwalkingFrame.quickStartEnabled=false;
+
 
 local function eventHandler(self, event, ...)
+  if event ~="CHAT_MSG_ADDON" then
+    print("event: "..event);
+  end
   if event == "ADDON_LOADED" and ... == "Speedwalking" then
     if not speedwalkingVars then
       speedwalkingVars = {};
@@ -472,6 +475,9 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["cmTimer"] = true;
       speedwalkingVars["timewalkingTimer"] = true;
       speedwalkingVars["quickStart"]=false;
+      speedwalkingVars["quickLeave"]=true;
+      speedwalkingVars["quickKick"]=true;
+      speedwalkingVars["quickInvite"]=true;
     end
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
@@ -482,7 +488,10 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.timewalking = speedwalkingVars["timewalkingTimer"];
     speedwalkingFrame.killCountIDs = killCountIDs or {};
     speedwalkingFrame.setupAddonPanel();
-    speedwalkingFrame.quickStartEnabled=speedwalkingVars["quickStart"];
+    speedwalkingFrame.quickStartEnabled = speedwalkingVars["quickStart"];
+    speedwalkingFrame.quickLeaveEnabled = speedwalkingVars["quickLeave"];
+    speedwalkingFrame.quickKickEnabled = speedwalkingVars["quickKick"];
+    speedwalkingFrame.quickInviteEnabled = speedwalkingVars["quickInvite"];
     
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
@@ -563,6 +572,17 @@ local function eventHandler(self, event, ...)
         speedwalkingFrame.sendMob(destGUID);
       end
     end
+  elseif event == "GROUP_ROSTER_UPDATE" then
+    local newHistory={};
+    for i=1,GetNumGroupMembers()-1 do
+      table.insert(newHistory,GetUnitName("party"..i , true));
+    end
+    for k,v in pairs(speedwalkingFrame.groupHistory) do
+      if (not table.contains(newHistory,v)) and speedwalkingFrame.quickInviteEnabled and speedwalkingFrame.inCM then
+        InviteUnit(v);
+      end
+    end
+    speedwalkingFrame.groupHistory=newHistory;
   end
 end
 
@@ -583,6 +603,12 @@ speedwalkingFrame.resyncTable = {};
 speedwalkingFrame.waitingForKillcount=false;
 speedwalkingFrame.speedwalkingDungeonInfo = speedwalkingDungeonInfo;
 speedwalkingFrame.killCountIDs = {};
+speedwalkingFrame.quickStartEnabled=false;
+speedwalkingFrame.quickLeaveEnabled = false;
+speedwalkingFrame.groupHistory={};
+speedwalkingFrame.quickKickEnabled = false;
+speedwalkingFrame.quickInviteEnabled = false;
+
 
 -- Register Textures
 speedwalkingFrame.texture = speedwalkingFrame:CreateTexture(nil,"BACKGROUND");
@@ -601,6 +627,7 @@ speedwalkingFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
 speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_START");
 speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_RESET");
 speedwalkingFrame:RegisterEvent("CHAT_MSG_ADDON");
+speedwalkingFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
@@ -844,6 +871,14 @@ function dec_64(data)
     end))
 end
 
+function table.contains(table, element)
+  for _, value in pairs(table) do
+    if value == element then
+      return true
+    end
+  end
+  return false
+end
 
 speedwalkingFrame.addIDToTable = function()
     local name = UnitName("target");
