@@ -460,9 +460,6 @@ end
 
 
 local function eventHandler(self, event, ...)
-  if event ~="CHAT_MSG_ADDON" then
-    print("event: "..event);
-  end
   if event == "ADDON_LOADED" and ... == "Speedwalking" then
     if not speedwalkingVars then
       speedwalkingVars = {};
