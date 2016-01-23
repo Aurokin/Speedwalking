@@ -436,7 +436,7 @@ speedwalkingFrame.sendMob = function(guid)
     local msg = "MobTimestamp:" .. guid..":"..GetTime()-speedwalkingFrame.currentTW["startTime"];
     SendAddonMessage(speedwalkingFrame.prefix, msg, "RAID");
   end
-  
+
 end
 
 speedwalkingFrame.sendCurrentTW = function()
@@ -570,9 +570,10 @@ speedwalkingFrame.unlocked = false;
 speedwalkingFrame.minWidth = 200;
 speedwalkingFrame.twDifficulty = 1;
 speedwalkingFrame.prefix = "SPEEDWALKING";
-speedwalkingFrame.resyncTable={};
+speedwalkingFrame.resyncTable = {};
 speedwalkingFrame.waitingForKillcount=false;
 speedwalkingFrame.speedwalkingDungeonInfo = speedwalkingDungeonInfo;
+speedwalkingFrame.killCountIDs = {};
 
 -- Register Textures
 speedwalkingFrame.texture = speedwalkingFrame:CreateTexture(nil,"BACKGROUND");
@@ -806,7 +807,7 @@ local b_64='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
 -- encoding
 function enc_64(data)
-    return ((data:gsub('.', function(x) 
+    return ((data:gsub('.', function(x)
         local r,b='',x:byte()
         for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
         return r;
@@ -832,4 +833,21 @@ function dec_64(data)
         for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end
         return string.char(c)
     end))
+end
+
+speedwalkingFrame.addIDToTable = function()
+    local name = UnitName("target");
+    local guid = split(UnitGUID("target"),"-")[6];
+    print(name .. ": " .. guid);
+    speedwalkingFrame.killCountIDs[guid] = name;
+end
+
+speedwalkingFrame.clearIDTable = function()
+  speedwalkingFrame.killCountIDs = table.wipe(speedwalkingFrame.killCountIDs);
+  print("Wiped ID Table");
+end
+
+speedwalkingFrame.saveIDTable = function()
+  killCountIDs = speedwalkingFrame.killCountIDs;
+  print("Saved ID Table");
 end

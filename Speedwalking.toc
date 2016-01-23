@@ -1,6 +1,6 @@
 ## Interface: 60200
 ## Title: Speedwalking
 ## Notes: CM Style Timer For Timewalking
-## SavedVariables: speedwalkingVars
+## SavedVariables: speedwalkingVars, killCountIDs
 InstanceInfo.lua
 Speedwalking.lua
