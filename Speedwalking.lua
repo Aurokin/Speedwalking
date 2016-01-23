@@ -289,6 +289,9 @@ speedwalkingFrame.updateInfo = function()
     speedwalkingObjectiveFrame.font:SetText(objectiveText);
     speedwalkingFrame.resizeFrame();
   end
+  if speedwalkingFrame.inCM and speedwalkingFrame.quickStartEnabled then
+    SelectGossipOption(1);
+  end
 end
 
 speedwalkingFrame.toggleLock = function()
@@ -454,6 +457,8 @@ speedwalkingFrame.addMobToList = function(destGUID)
   end
 end
 
+speedwalkingFrame.quickStartEnabled=false;
+
 local function eventHandler(self, event, ...)
   if event == "ADDON_LOADED" and ... == "Speedwalking" then
     if not speedwalkingVars then
@@ -466,6 +471,7 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["goldTimer"] = true;
       speedwalkingVars["cmTimer"] = true;
       speedwalkingVars["timewalkingTimer"] = true;
+      speedwalkingVars["quickStart"]=false;
     end
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
@@ -476,6 +482,8 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.timewalking = speedwalkingVars["timewalkingTimer"];
     speedwalkingFrame.killCountIDs = killCountIDs or {};
     speedwalkingFrame.setupAddonPanel();
+    speedwalkingFrame.quickStartEnabled=speedwalkingVars["quickStart"];
+    
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
   elseif event == "CHAT_MSG_ADDON" then
@@ -560,7 +568,7 @@ end
 
 -- Global Variables (Most likely saved later)
 speedwalkingFrame.inTW = false;
-speedwalkingFrame.inCM = false;
+speedwalkingFrame.inCM = true;
 speedwalkingFrame.successColor = "000ff000";
 speedwalkingFrame.trueTimer = true;
 speedwalkingFrame.goldTimer = true;
@@ -863,3 +871,5 @@ speedwalkingFrame.saveIDTable = function()
   killCountIDs = speedwalkingFrame.killCountIDs;
   print("Saved ID Table");
 end
+
+
