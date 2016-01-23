@@ -502,13 +502,15 @@ local function eventHandler(self, event, ...)
           end
         end
       end
-      if (msg[1] == "KillcountRequest") and (not SpeedwalkingFrame.currentTW["lateStart"]) then
-        local response = "KillcountResponse:"..speedwalkingFrame.currentTW["enemies"];
-        SendAddonMessage(speedwalkingFrame.prefix, response, "RAID");
-      end
-      if (msg[1] == "KillcountResponse") and speedwalkingFrame.waitingForKillcount then
-        speedwalkingFrame.waitingForKillcount=false;
-        speedwalkingFrame.currentTW["enemies"]=tonumber(msg[2]);
+      if speedwalkingFrame.currentTW then
+        if (msg[1] == "KillcountRequest") and (not SpeedwalkingFrame.currentTW["lateStart"]) then
+          local response = "KillcountResponse:"..speedwalkingFrame.currentTW["enemies"];
+          SendAddonMessage(speedwalkingFrame.prefix, response, "RAID");
+        end
+        if (msg[1] == "KillcountResponse") and speedwalkingFrame.waitingForKillcount then
+          speedwalkingFrame.waitingForKillcount=false;
+          speedwalkingFrame.currentTW["enemies"]=tonumber(msg[2]);
+        end
       end
     end
   elseif event == "PLAYER_ENTERING_WORLD" then
