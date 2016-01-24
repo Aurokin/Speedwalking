@@ -4,3 +4,4 @@
 ## SavedVariables: speedwalkingVars, killCountIDs
 InstanceInfo.lua
 Speedwalking.lua
+InterfacePanel.lua
