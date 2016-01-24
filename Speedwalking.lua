@@ -366,17 +366,56 @@ speedwalkingFrame.toggleTimewalkingTimer = function()
   speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingTimewalkingTimerButton"]:SetChecked(speedwalkingFrame.timewalking);
 end
 
+speedwalkingFrame.toggleCMAutoStart = function()
+  if (speedwalkingFrame.quickStartEnabled == true) then
+    speedwalkingFrame.quickStartEnabled = false;
+  else
+    speedwalkingFrame.quickStartEnabled = true;
+  end
+  speedwalkingVars["quickStart"] = speedwalkingFrame.quickStartEnabled;
+  speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoStartButton"]:SetChecked(speedwalkingFrame.quickStartEnabled);
+end
+
+speedwalkingFrame.toggleCMAutoLeave = function()
+  if (speedwalkingFrame.quickLeaveEnabled == true) then
+    speedwalkingFrame.quickLeaveEnabled = false;
+  else
+    speedwalkingFrame.quickLeaveEnabled = true;
+  end
+  speedwalkingVars["quickLeave"] = speedwalkingFrame.quickLeaveEnabled;
+  speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoLeaveButton"]:SetChecked(speedwalkingFrame.quickLeaveEnabled);
+end
+
+speedwalkingFrame.toggleCMAutoKick = function()
+  if (speedwalkingFrame.quickKickEnabled == true) then
+    speedwalkingFrame.quickKickEnabled = false;
+  else
+    speedwalkingFrame.quickKickEnabled = true;
+  end
+  speedwalkingVars["quickKick"] = speedwalkingFrame.quickKickEnabled;
+  speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoKickButton"]:SetChecked(speedwalkingFrame.quickKickEnabled);
+end
+
+speedwalkingFrame.toggleCMAutoInvite = function()
+  if (speedwalkingFrame.quickInviteEnabled == true) then
+    speedwalkingFrame.quickInviteEnabled = false;
+  else
+    speedwalkingFrame.quickInviteEnabled = true;
+  end
+  speedwalkingVars["quickInvite"] = speedwalkingFrame.quickInviteEnabled;
+  speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoInviteButton"]:SetChecked(speedwalkingFrame.quickInviteEnabled);
+end
+
 speedwalkingFrame.setupAddonPanel = function()
   speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetChecked(speedwalkingFrame.trueTimer);
   speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(speedwalkingFrame.competitive);
   speedwalkingFrame.panel.buttons["SpeedwalkingGoldTimerButton"]:SetChecked(speedwalkingFrame.goldTimer);
   speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(speedwalkingFrame.cms);
-  speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingTimewalkingTimerButton"]:SetChecked(  speedwalkingFrame.timewalking);
-
-  -- speedwalkingFrame.quickStartEnabled = speedwalkingVars["quickStart"] or false;
-  -- speedwalkingFrame.quickLeaveEnabled = speedwalkingVars["quickLeave"] or false;
-  -- speedwalkingFrame.quickKickEnabled = speedwalkingVars["quickKick"] or false;
-  -- speedwalkingFrame.quickInviteEnabled = speedwalkingVars["quickInvite"] or false;
+  speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingTimewalkingTimerButton"]:SetChecked(speedwalkingFrame.timewalking);
+  speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoStartButton"]:SetChecked(speedwalkingFrame.quickStartEnabled);
+  speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoLeaveButton"]:SetChecked(speedwalkingFrame.quickLeaveEnabled);
+  speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoKickButton"]:SetChecked(speedwalkingFrame.quickKickEnabled);
+  speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoInviteButton"]:SetChecked(speedwalkingFrame.quickInviteEnabled);
 end
 
 speedwalkingFrame.enableTW = function()
@@ -604,12 +643,11 @@ speedwalkingFrame.resyncTable = {};
 speedwalkingFrame.waitingForKillcount=false;
 speedwalkingFrame.speedwalkingDungeonInfo = speedwalkingDungeonInfo;
 speedwalkingFrame.killCountIDs = {};
-speedwalkingFrame.quickStartEnabled=false;
+speedwalkingFrame.groupHistory = {};
+speedwalkingFrame.quickStartEnabled = false;
 speedwalkingFrame.quickLeaveEnabled = false;
-speedwalkingFrame.groupHistory={};
 speedwalkingFrame.quickKickEnabled = false;
 speedwalkingFrame.quickInviteEnabled = false;
-
 
 -- Register Textures
 speedwalkingFrame.texture = speedwalkingFrame:CreateTexture(nil,"BACKGROUND");
@@ -789,6 +827,62 @@ speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMTimerButton"]:SetPoint("TOPLEFT
 speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMTimerButton"]:SetText("CM Timer");
 speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMTimerButton"]:SetChecked(true);
 speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMTimerButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCMTimer() end);
+
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoStartText"] = speedwalkingFrame.cmPanel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoStartText"]:SetFontObject(GameFontWhite);
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoStartText"]:SetJustifyH("LEFT");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoStartText"]:SetJustifyV("TOP");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoStartText"]:ClearAllPoints();
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoStartText"]:SetPoint("TOPLEFT", speedwalkingFrame.cmPanel, "TOPLEFT", 30, -50);
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoStartText"]:SetText("Auto Start CM");
+
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoStartButton"] = CreateFrame("CheckButton", "SpeedwalkingCMAutoStartButton", speedwalkingFrame.cmPanel, "OptionsCheckButtonTemplate");
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoStartButton"]:SetPoint("TOPLEFT", speedwalkingFrame.cmPanel, "TOPLEFT", 5, -40);
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoStartButton"]:SetText("Auto Start CM");
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoStartButton"]:SetChecked(false);
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoStartButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCMAutoStart() end);
+
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoLeaveText"] = speedwalkingFrame.cmPanel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoLeaveText"]:SetFontObject(GameFontWhite);
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoLeaveText"]:SetJustifyH("LEFT");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoLeaveText"]:SetJustifyV("TOP");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoLeaveText"]:ClearAllPoints();
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoLeaveText"]:SetPoint("TOPLEFT", speedwalkingFrame.cmPanel, "TOPLEFT", 30, -70);
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoLeaveText"]:SetText("Auto Leave Vehicle");
+
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoLeaveButton"] = CreateFrame("CheckButton", "SpeedwalkingCMAutoLeaveButton", speedwalkingFrame.cmPanel, "OptionsCheckButtonTemplate");
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoLeaveButton"]:SetPoint("TOPLEFT", speedwalkingFrame.cmPanel, "TOPLEFT", 5, -60);
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoLeaveButton"]:SetText("Auto Leave Vehicle");
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoLeaveButton"]:SetChecked(false);
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoLeaveButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCMAutoLeave() end);
+
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoKickText"] = speedwalkingFrame.cmPanel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoKickText"]:SetFontObject(GameFontWhite);
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoKickText"]:SetJustifyH("LEFT");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoKickText"]:SetJustifyV("TOP");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoKickText"]:ClearAllPoints();
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoKickText"]:SetPoint("TOPLEFT", speedwalkingFrame.cmPanel, "TOPLEFT", 30, -90);
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoKickText"]:SetText("Auto Kick From Vehicle");
+
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoKickButton"] = CreateFrame("CheckButton", "SpeedwalkingCMAutoKickButton", speedwalkingFrame.cmPanel, "OptionsCheckButtonTemplate");
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoKickButton"]:SetPoint("TOPLEFT", speedwalkingFrame.cmPanel, "TOPLEFT", 5, -80);
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoKickButton"]:SetText("Auto Kick From Vehicle");
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoKickButton"]:SetChecked(false);
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoKickButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCMAutoKick() end);
+
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoInviteText"] = speedwalkingFrame.cmPanel:CreateFontString(nil, "ARTWORK");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoInviteText"]:SetFontObject(GameFontWhite);
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoInviteText"]:SetJustifyH("LEFT");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoInviteText"]:SetJustifyV("TOP");
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoInviteText"]:ClearAllPoints();
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoInviteText"]:SetPoint("TOPLEFT", speedwalkingFrame.cmPanel, "TOPLEFT", 30, -110);
+speedwalkingFrame.cmPanel.buttonText["SpeedwalkingCMAutoInviteText"]:SetText("Auto Invite After Member Leaves");
+
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoInviteButton"] = CreateFrame("CheckButton", "SpeedwalkingCMAutoInviteButton", speedwalkingFrame.cmPanel, "OptionsCheckButtonTemplate");
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoInviteButton"]:SetPoint("TOPLEFT", speedwalkingFrame.cmPanel, "TOPLEFT", 5, -100);
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoInviteButton"]:SetText("Auto Invite After Member Leaves");
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoInviteButton"]:SetChecked(false);
+speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoInviteButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCMAutoInvite() end);
 
 speedwalkingFrame.timewalkingPanel.buttonText["SpeedwalkingTimewalkingTimerText"] = speedwalkingFrame.timewalkingPanel:CreateFontString(nil, "ARTWORK");
 speedwalkingFrame.timewalkingPanel.buttonText["SpeedwalkingTimewalkingTimerText"]:SetFontObject(GameFontWhite);
