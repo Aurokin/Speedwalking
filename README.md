@@ -3,9 +3,10 @@ For Your Go Fast Timewalking Needs
 
 # To Do List
 Small Features  
-- Auto Start CM  
+- ~~Auto Start CM~~  
 - Auto Leave Vehicle  
 - Auto Kick From Mount  
+- ~~Auto Invite After Leaving Group~~  
 - Blademaster SMBG Fix  
 - Font Size Option  
 - Font Alignment Option  
