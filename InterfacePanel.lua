@@ -1,6 +1,7 @@
 -- Interface Panel
 speedwalkingFrame.panel = CreateFrame("Frame", "SpeedwalkingPanel", UIParent);
 speedwalkingFrame.panel.name = "Speedwalking";
+speedwalkingFrame.panel.sliders = {};
 speedwalkingFrame.panel.buttons = {};
 speedwalkingFrame.panel.buttonText = {};
 
@@ -40,6 +41,7 @@ speedwalkingFrame.timewalkingPanel.header:ClearAllPoints();
 speedwalkingFrame.timewalkingPanel.header:SetPoint("TOPLEFT", 5, 0);
 speedwalkingFrame.timewalkingPanel.header:SetText("Timewalking Options");
 
+-- Buttons
 speedwalkingFrame.panel.buttonText["SpeedwalkingLockText"] = speedwalkingFrame.panel:CreateFontString(nil, "ARTWORK");
 speedwalkingFrame.panel.buttonText["SpeedwalkingLockText"]:SetFontObject(GameFontWhite);
 speedwalkingFrame.panel.buttonText["SpeedwalkingLockText"]:SetJustifyH("LEFT");
@@ -179,6 +181,28 @@ speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetP
 speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetText("Competitive Mode (Beta Feature)");
 speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(false);
 speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCompetitive() end);
+
+-- Sliders
+speedwalkingFrame.createSlider = function(name, panel, width, height, orientation, point, xOffset, yOffset, min, max, text, defaultValue, step)
+  speedwalkingFrame.panel.sliders[name] = CreateFrame("Slider", name, panel, "OptionsSliderTemplate");
+  local currentSlider = speedwalkingFrame.panel.sliders[name];
+  currentSlider:SetWidth(width);
+  currentSlider:SetHeight(height);
+  currentSlider:SetOrientation(orientation);
+  currentSlider:SetPoint(point, xOffset, yOffset);
+  currentSlider:SetThumbTexture("Interface\\Buttons\\UI-SliderBar-Button-Horizontal");
+  _G[currentSlider:GetName() .. 'Low']:SetText(min);
+  _G[currentSlider:GetName()  .. 'High']:SetText(max);
+  _G[currentSlider:GetName()  .. 'Text']:SetText(text);
+  currentSlider:SetMinMaxValues(min, max);
+  currentSlider:SetValue(defaultValue);
+  currentSlider:SetValueStep(step);
+  currentSlider:Show();
+  currentSlider:Enable();
+end
+
+speedwalkingFrame.createSlider("SpeedwalkingTimerXOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 5, -200, -100, 100, "xOffset", 0, 1);
+speedwalkingFrame.createSlider("SpeedwalkingTimerYOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 155, -200, -100, 100, "yOffset", 0, 1);
 
 InterfaceOptions_AddCategory(speedwalkingFrame.panel);
 InterfaceOptions_AddCategory(speedwalkingFrame.cmPanel);
