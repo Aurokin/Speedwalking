@@ -636,6 +636,17 @@ local function eventHandler(self, event, ...)
       
     end
     speedwalkingFrame.groupHistory=newHistory;
+  elseif event == "UNIT_ENTERED_VEHICLE" then
+    if CanExitVehicle() and speedwalkingFrame.quickLeaveEnabled then
+      VehicleExit();
+    end
+  elseif event == "VEHICLE_PASSENGERS_CHANGED" or event == "VEHICLE_UPDATE" then
+    if CanEjectPassengerFromSeat(1) and speedwalkingFrame.quickKickEnabled then
+      EjectPassengerFromSeat(1)
+    end
+    if CanEjectPassengerFromSeat(2) and speedwalkingFrame.quickKickEnabled then
+      EjectPassengerFromSeat(2)
+    end
   end
 end
 
@@ -680,6 +691,8 @@ speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_START");
 speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_RESET");
 speedwalkingFrame:RegisterEvent("CHAT_MSG_ADDON");
 speedwalkingFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
+speedwalkingFrame:RegisterEvent("UNIT_ENTERED_VEHICLE");
+
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
