@@ -626,7 +626,7 @@ local function eventHandler(self, event, ...)
       end
       
     end
-    if groupDifferenceCount == 1 then
+    if groupDifferenceCount == 1 and speedwalkingFrame.quickInviteEnabled then
       if #speedwalkingFrame.groupHistory == 1 then
         if GetUnitName("player")<toonToInvite then
           InviteUnit(toonToInvite);
