@@ -617,10 +617,23 @@ local function eventHandler(self, event, ...)
     for i=1,GetNumGroupMembers()-1 do
       table.insert(newHistory,GetUnitName("party"..i , true));
     end
+    local toonToInvite = ""
+    local groupDifferenceCount=0
     for k,v in pairs(speedwalkingFrame.groupHistory) do
       if (not table.contains(newHistory,v)) and speedwalkingFrame.quickInviteEnabled and speedwalkingFrame.inCM then
-        InviteUnit(v);
+        groupDifferenceCount=groupDifferenceCount+1;
+        toonToInvite=v;
       end
+    end
+    if groupDifferenceCount == 1 then
+      if #speedwalkingFrame.groupHistory == 2 then
+        if GetUnitName("player")<toonToInvite then
+          InviteUnit(toonToInvite);
+        end
+      else
+        InviteUnit(toonToInvite);
+      end
+      
     end
     speedwalkingFrame.groupHistory=newHistory;
   end
