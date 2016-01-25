@@ -620,20 +620,20 @@ local function eventHandler(self, event, ...)
     local toonToInvite = ""
     local groupDifferenceCount=0
     for k,v in pairs(speedwalkingFrame.groupHistory) do
-      if (not table.contains(newHistory,v)) and speedwalkingFrame.quickInviteEnabled and speedwalkingFrame.inCM then
+      if (not table.contains(newHistory,v)) then
         groupDifferenceCount=groupDifferenceCount+1;
         toonToInvite=v;
       end
+      
     end
     if groupDifferenceCount == 1 then
-      if #speedwalkingFrame.groupHistory == 2 then
+      if #speedwalkingFrame.groupHistory == 1 then
         if GetUnitName("player")<toonToInvite then
           InviteUnit(toonToInvite);
         end
       else
         InviteUnit(toonToInvite);
       end
-      
     end
     speedwalkingFrame.groupHistory=newHistory;
   elseif event == "UNIT_ENTERED_VEHICLE" then
@@ -692,7 +692,8 @@ speedwalkingFrame:RegisterEvent("CHALLENGE_MODE_RESET");
 speedwalkingFrame:RegisterEvent("CHAT_MSG_ADDON");
 speedwalkingFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
 speedwalkingFrame:RegisterEvent("UNIT_ENTERED_VEHICLE");
-
+speedwalkingFrame:RegisterEvent("VEHICLE_PASSENGERS_CHANGED");
+speedwalkingFrame:RegisterEvent("VEHICLE_UPDATE");
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(240);
