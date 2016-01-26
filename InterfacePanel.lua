@@ -1,6 +1,7 @@
 -- Interface Panel
 speedwalkingFrame.panel = CreateFrame("Frame", "SpeedwalkingPanel", UIParent);
 speedwalkingFrame.panel.name = "Speedwalking";
+speedwalkingFrame.panel.dropdowns = {};
 speedwalkingFrame.panel.sliders = {};
 speedwalkingFrame.panel.buttons = {};
 speedwalkingFrame.panel.buttonText = {};
@@ -220,9 +221,49 @@ speedwalkingFrame.createSlider = function(name, panel, width, height, orientatio
   currentSlider:Enable();
 end
 
+speedwalkingFrame.createDropDownMenu = function(name, panel, width, height, point, xOffset, yOffset, defaultID)
+  speedwalkingFrame.panel.dropdowns[name] = CreateFrame("Button", name, panel, "UIDropDownMenuTemplate");
+  local currentDropDown = speedwalkingFrame.panel.dropdowns[name];
+  currentDropDown:SetPoint(point, xOffset, yOffset);
+  local items = {
+    "LEFT",
+    "CENTER",
+    "RIGHT",
+  }
+
+  local function OnClick(self)
+    UIDropDownMenu_SetSelectedID(currentDropDown, self:GetID());
+    speedwalkingVars["SpeedwalkingTimerAlign"] = self.value;
+    speedwalkingTimerFrame.font:SetJustifyH(speedwalkingVars["SpeedwalkingTimerAlign"]);
+    -- Click Needs To Set Position
+    -- Then Save To Account Variable
+    -- Then Realign
+    -- http://wowprogramming.com/snippets/Create_UI-styled_dropdown_menu_10
+  end
+
+  local function initialize(self, level)
+    local info = UIDropDownMenu_CreateInfo()
+    for k,v in pairs(items) do
+      info = UIDropDownMenu_CreateInfo();
+      info.text = v;
+      info.value = v;
+      info.func = OnClick;
+      UIDropDownMenu_AddButton(info, 1);
+    end
+  end
+
+  UIDropDownMenu_Initialize(currentDropDown, initialize);
+  UIDropDownMenu_SetSelectedID(currentDropDown, defaultID);
+  UIDropDownMenu_JustifyText(currentDropDown, "LEFT");
+  UIDropDownMenu_SetWidth(currentDropDown, width);
+  UIDropDownMenu_SetButtonWidth(currentDropDown, width + 25);
+end
+
 speedwalkingFrame.createSlider("SpeedwalkingTimerXOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 5, -200, -100, 100, "xOffset", 0, 1, "FRAME");
 speedwalkingFrame.createSlider("SpeedwalkingTimerYOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 205, -200, -100, 100, "yOffset", 0, 1, "FRAME");
 speedwalkingFrame.createSlider("SpeedwalkingTimerFontSizeSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 405, -200, 10, 32, "Font Size", 29, 1, "FONT");
+
+speedwalkingFrame.createDropDownMenu("SpeedwalkingTimerAlign", speedwalkingFrame.panel, 100, 50, "TOPLEFT", -10, -125, 2);
 
 InterfaceOptions_AddCategory(speedwalkingFrame.panel);
 InterfaceOptions_AddCategory(speedwalkingFrame.cmPanel);

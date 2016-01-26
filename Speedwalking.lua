@@ -430,6 +430,7 @@ speedwalkingFrame.setupAddonPanel = function()
   speedwalkingTimerFrame:ClearAllPoints();
   speedwalkingTimerFrame:SetPoint(speedwalkingFrame.timerPoint, speedwalkingVars["SpeedwalkingTimerXOffset"], speedwalkingVars["SpeedwalkingTimerYOffset"]);
   speedwalkingTimerFrame.font:SetFont("Interface\\Addons\\Speedwalking\\MyriadCondensedWeb.ttf", speedwalkingFrame.timerFontSize, "OUTLINE");
+  speedwalkingTimerFrame.font:SetJustifyH(speedwalkingFrame.timerAlign);
 end
 
 speedwalkingFrame.enableTW = function()
@@ -528,6 +529,7 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["SpeedwalkingTimerYOffset"] = 0;
       speedwalkingVars["SpeedwalkingTimerPoint"] = "TOP";
       speedwalkingVars["SpeedwalkingTimerFontSize"] = 29;
+      speedwalkingVars["SpeedwalkingTimerAlign"] = "CENTER";
       speedwalkingVars["trueTimer"] = true;
       speedwalkingVars["competitive"] = false;
       speedwalkingVars["goldTimer"] = true;
@@ -537,7 +539,6 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["quickLeave"] = false;
       speedwalkingVars["quickKick"] = false;
       speedwalkingVars["quickInvite"] = false;
-
     end
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint(speedwalkingVars["anchor"], speedwalkingVars["xOffset"], speedwalkingVars["yOffset"]);
@@ -553,6 +554,7 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.quickInviteEnabled = speedwalkingVars["quickInvite"] or false;
     speedwalkingFrame.timerPoint = speedwalkingVars["SpeedwalkingTimerPoint"] or "TOP";
     speedwalkingFrame.timerFontSize = speedwalkingVars["SpeedwalkingTimerFontSize"] or 29;
+    speedwalkingFrame.timerAlign = speedwalkingVars["SpeedwalkingTimerAlign"] or "CENTER";
     speedwalkingFrame.setupAddonPanel();
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
