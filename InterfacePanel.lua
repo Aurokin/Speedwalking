@@ -186,6 +186,7 @@ speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetS
 speedwalkingFrame.createSlider = function(name, panel, width, height, orientation, point, xOffset, yOffset, min, max, text, defaultValue, step)
   speedwalkingFrame.panel.sliders[name] = CreateFrame("Slider", name, panel, "OptionsSliderTemplate");
   local currentSlider = speedwalkingFrame.panel.sliders[name];
+  currentSlider.labelText = text;
   currentSlider:SetWidth(width);
   currentSlider:SetHeight(height);
   currentSlider:SetOrientation(orientation);
@@ -193,16 +194,23 @@ speedwalkingFrame.createSlider = function(name, panel, width, height, orientatio
   currentSlider:SetThumbTexture("Interface\\Buttons\\UI-SliderBar-Button-Horizontal");
   _G[currentSlider:GetName() .. 'Low']:SetText(min);
   _G[currentSlider:GetName()  .. 'High']:SetText(max);
-  _G[currentSlider:GetName()  .. 'Text']:SetText(text);
+  _G[currentSlider:GetName()  .. 'Text']:SetText(text .. " : 0");
   currentSlider:SetMinMaxValues(min, max);
-  currentSlider:SetValue(defaultValue);
+  -- currentSlider:SetValue(defaultValue);
   currentSlider:SetValueStep(step);
+
+  currentSlider:SetScript("OnValueChanged", function(self, value)
+    self:SetValue(value)
+    _G[self:GetName()  .. 'Text']:SetText(self.labelText .. " : " .. self:GetValue());
+    speedwalkingVars[string.gsub(self:GetName(), "Slider", "")] = self:GetValue();
+  end);
+
   currentSlider:Show();
   currentSlider:Enable();
 end
 
-speedwalkingFrame.createSlider("SpeedwalkingTimerXOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 5, -200, -100, 100, "xOffset", 0, 1);
-speedwalkingFrame.createSlider("SpeedwalkingTimerYOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 155, -200, -100, 100, "yOffset", 0, 1);
+-- speedwalkingFrame.createSlider("SpeedwalkingTimerXOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 5, -200, -100, 100, "xOffset", 0, 1);
+-- speedwalkingFrame.createSlider("SpeedwalkingTimerYOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 155, -200, -100, 100, "yOffset", 0, 1);
 
 InterfaceOptions_AddCategory(speedwalkingFrame.panel);
 InterfaceOptions_AddCategory(speedwalkingFrame.cmPanel);

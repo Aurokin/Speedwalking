@@ -416,6 +416,14 @@ speedwalkingFrame.setupAddonPanel = function()
   speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoLeaveButton"]:SetChecked(speedwalkingFrame.quickLeaveEnabled);
   speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoKickButton"]:SetChecked(speedwalkingFrame.quickKickEnabled);
   speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoInviteButton"]:SetChecked(speedwalkingFrame.quickInviteEnabled);
+
+  -- local name = "SpeedwalkingTimerXOffset";
+  -- local value = speedwalkingVars[name] or 0;
+  -- local currentSlider = speedwalkingFrame.panel.sliders[name .. "Slider"];
+  -- currentSlider:SetValue(value);
+  -- _G[currentSlider:GetName()  .. 'Text']:SetText(currentSlider.labelText .. " : " .. currentSlider:GetValue());
+  -- speedwalkingTimerFrame.font:ClearAllPoints();
+  -- speedwalkingTimerFrame.font:SetPoint("BOTTOM", speedwalkingVars["SpeedwalkingTimerXOffset"], speedwalkingVars["SpeedwalkingTimerYOffset"]);
 end
 
 speedwalkingFrame.enableTW = function()
@@ -510,6 +518,8 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["anchor"] = "RIGHT";
       speedwalkingVars["xOffset"] = 0;
       speedwalkingVars["yOffset"] = 0;
+      speedwalkingVars["SpeedwalkingTimerXOffset"] = 0;
+      speedwalkingVars["SpeedwalkingTimerYOffset"] = 0;
       speedwalkingVars["trueTimer"] = true;
       speedwalkingVars["competitive"] = false;
       speedwalkingVars["goldTimer"] = true;
@@ -624,7 +634,7 @@ local function eventHandler(self, event, ...)
         groupDifferenceCount=groupDifferenceCount+1;
         toonToInvite=v;
       end
-      
+
     end
     if groupDifferenceCount == 1 and speedwalkingFrame.quickInviteEnabled then
       if #speedwalkingFrame.groupHistory == 1 then
@@ -768,6 +778,8 @@ local function handler(msg, editbox)
     speedwalkingVars["anchor"] = "RIGHT";
     speedwalkingVars["xOffset"] = 0;
     speedwalkingVars["yOffset"] = 0;
+    speedwalkingVars["SpeedwalkingTimerXOffset"] = 0;
+    speedwalkingVars["SpeedwalkingTimerYOffset"] = 0;
     speedwalkingVars["trueTimer"] = true;
     speedwalkingVars["competitive"] = false;
     speedwalkingVars["goldTimer"] = true;
