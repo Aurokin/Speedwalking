@@ -426,11 +426,22 @@ speedwalkingFrame.setupAddonPanel = function()
   speedwalkingFrame.setupSlider("SpeedwalkingTimerXOffset");
   speedwalkingFrame.setupSlider("SpeedwalkingTimerYOffset");
   speedwalkingFrame.setupSlider("SpeedwalkingTimerFontSize");
+  speedwalkingFrame.setupSlider("SpeedwalkingObjectiveXOffset");
+  speedwalkingFrame.setupSlider("SpeedwalkingObjectiveYOffset");
+  speedwalkingFrame.setupSlider("SpeedwalkingObjectiveFontSize");
+  UIDropDownMenu_SetSelectedID(speedwalkingFrame.panel.dropdowns["SpeedwalkingTimerAlign"], speedwalkingFrame.alignGuide[speedwalkingFrame.timerAlign]);
+  UIDropDownMenu_SetSelectedID(speedwalkingFrame.panel.dropdowns["SpeedwalkingObjectiveAlign"], speedwalkingFrame.alignGuide[speedwalkingFrame.objectiveAlign]);
 
   speedwalkingTimerFrame:ClearAllPoints();
   speedwalkingTimerFrame:SetPoint(speedwalkingFrame.timerPoint, speedwalkingVars["SpeedwalkingTimerXOffset"], speedwalkingVars["SpeedwalkingTimerYOffset"]);
   speedwalkingTimerFrame.font:SetFont("Interface\\Addons\\Speedwalking\\MyriadCondensedWeb.ttf", speedwalkingFrame.timerFontSize, "OUTLINE");
   speedwalkingTimerFrame.font:SetJustifyH(speedwalkingFrame.timerAlign);
+
+  speedwalkingObjectiveFrame:ClearAllPoints();
+  speedwalkingObjectiveFrame:SetPoint(speedwalkingFrame.objectivePoint, speedwalkingVars["SpeedwalkingObjectiveXOffset"], speedwalkingVars["SpeedwalkingObjectiveYOffset"]);
+  speedwalkingObjectiveFrame.font:SetFont("Interface\\Addons\\Speedwalking\\MyriadCondensedWeb.ttf", speedwalkingFrame.objectiveFontSize, "OUTLINE");
+  speedwalkingObjectiveFrame.font:SetJustifyH(speedwalkingFrame.objectiveAlign);
+
 end
 
 speedwalkingFrame.enableTW = function()
@@ -530,6 +541,11 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["SpeedwalkingTimerPoint"] = "TOP";
       speedwalkingVars["SpeedwalkingTimerFontSize"] = 29;
       speedwalkingVars["SpeedwalkingTimerAlign"] = "CENTER";
+      speedwalkingVars["SpeedwalkingObjectiveXOffset"] = 0;
+      speedwalkingVars["SpeedwalkingObjectiveYOffset"] = -40;
+      speedwalkingVars["SpeedwalkingObjectivePoint"] = "TOP";
+      speedwalkingVars["SpeedwalkingObjectiveFontSize"] = 21;
+      speedwalkingVars["SpeedwalkingObjectiveAlign"] = "LEFT";
       speedwalkingVars["trueTimer"] = true;
       speedwalkingVars["competitive"] = false;
       speedwalkingVars["goldTimer"] = true;
@@ -555,6 +571,9 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.timerPoint = speedwalkingVars["SpeedwalkingTimerPoint"] or "TOP";
     speedwalkingFrame.timerFontSize = speedwalkingVars["SpeedwalkingTimerFontSize"] or 29;
     speedwalkingFrame.timerAlign = speedwalkingVars["SpeedwalkingTimerAlign"] or "CENTER";
+    speedwalkingFrame.objectivePoint = speedwalkingVars["SpeedwalkingObjectivePoint"] or "TOP";
+    speedwalkingFrame.objectiveFontSize = speedwalkingVars["SpeedwalkingObjectiveFontSize"] or 21;
+    speedwalkingFrame.objectiveAlign = speedwalkingVars["SpeedwalkingObjectiveAlign"] or "LEFT";
     speedwalkingFrame.setupAddonPanel();
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();
@@ -695,6 +714,11 @@ speedwalkingFrame.quickStartEnabled = false;
 speedwalkingFrame.quickLeaveEnabled = false;
 speedwalkingFrame.quickKickEnabled = false;
 speedwalkingFrame.quickInviteEnabled = false;
+speedwalkingFrame.alignGuide = {
+  ["LEFT"] = 1,
+  ["CENTER"] = 2,
+  ["RIGHT"] = 3,
+};
 
 -- Register Textures
 speedwalkingFrame.texture = speedwalkingFrame:CreateTexture(nil,"BACKGROUND");
@@ -719,13 +743,13 @@ speedwalkingFrame:RegisterEvent("VEHICLE_PASSENGERS_CHANGED");
 speedwalkingFrame:RegisterEvent("VEHICLE_UPDATE");
 
 -- Set Frame Height/Width
-speedwalkingFrame:SetHeight(240);
+speedwalkingFrame:SetHeight(340);
 speedwalkingFrame:SetWidth(speedwalkingFrame.minWidth);
 speedwalkingFrame:SetPoint("RIGHT", 0, 0);
 speedwalkingTimerFrame:SetHeight(40);
 speedwalkingTimerFrame:SetWidth(speedwalkingFrame.minWidth);
 speedwalkingTimerFrame:SetPoint("TOP", 0, 0);
-speedwalkingObjectiveFrame:SetHeight(200);
+speedwalkingObjectiveFrame:SetHeight(300);
 speedwalkingObjectiveFrame:SetWidth(speedwalkingFrame.minWidth);
 speedwalkingObjectiveFrame:SetPoint("TOP", 0, -40);
 speedwalkingFrame:SetMovable(speedwalkingFrame.unlocked);

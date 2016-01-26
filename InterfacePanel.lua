@@ -24,7 +24,7 @@ speedwalkingFrame.panel.header:SetJustifyH("LEFT");
 speedwalkingFrame.panel.header:SetJustifyV("TOP");
 speedwalkingFrame.panel.header:ClearAllPoints();
 speedwalkingFrame.panel.header:SetPoint("TOPLEFT", 5, 0);
-speedwalkingFrame.panel.header:SetText("Speedwalking");
+speedwalkingFrame.panel.header:SetText("Speedwalking Options");
 
 speedwalkingFrame.cmPanel.header = speedwalkingFrame.cmPanel:CreateFontString(nil, "ARTWORK");
 speedwalkingFrame.cmPanel.header:SetFontObject(GameFontNormalLarge);
@@ -184,7 +184,7 @@ speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetC
 speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCompetitive() end);
 
 -- Sliders
-speedwalkingFrame.createSlider = function(name, panel, width, height, orientation, point, xOffset, yOffset, min, max, text, defaultValue, step, type)
+speedwalkingFrame.createSlider = function(name, panel, width, height, orientation, point, xOffset, yOffset, min, max, text, defaultValue, step, type, frame, fName)
   speedwalkingFrame.panel.sliders[name] = CreateFrame("Slider", name, panel, "OptionsSliderTemplate");
   local currentSlider = speedwalkingFrame.panel.sliders[name];
   currentSlider.labelText = text;
@@ -205,15 +205,15 @@ speedwalkingFrame.createSlider = function(name, panel, width, height, orientatio
       self:SetValue(value)
       _G[self:GetName()  .. 'Text']:SetText(self.labelText .. " : " .. self:GetValue());
       speedwalkingVars[string.gsub(self:GetName(), "Slider", "")] = self:GetValue();
-      speedwalkingTimerFrame:ClearAllPoints();
-      speedwalkingTimerFrame:SetPoint(speedwalkingVars["SpeedwalkingTimerPoint"], speedwalkingVars["SpeedwalkingTimerXOffset"], speedwalkingVars["SpeedwalkingTimerYOffset"]);
+      frame:ClearAllPoints();
+      frame:SetPoint(speedwalkingVars["Speedwalking" .. fName .. "Point"], speedwalkingVars["Speedwalking" .. fName .. "XOffset"], speedwalkingVars["Speedwalking" .. fName .. "YOffset"]);
     end);
   elseif (type == "FONT") then
     currentSlider:SetScript("OnValueChanged", function(self, value)
       self:SetValue(value)
       _G[self:GetName()  .. 'Text']:SetText(self.labelText .. " : " .. self:GetValue());
       speedwalkingVars[string.gsub(self:GetName(), "Slider", "")] = self:GetValue();
-      speedwalkingTimerFrame.font:SetFont("Interface\\Addons\\Speedwalking\\MyriadCondensedWeb.ttf", speedwalkingVars[string.gsub(self:GetName(), "Slider", "")], "OUTLINE");
+      frame.font:SetFont("Interface\\Addons\\Speedwalking\\MyriadCondensedWeb.ttf", speedwalkingVars[string.gsub(self:GetName(), "Slider", "")], "OUTLINE");
     end);
   end
 
@@ -221,7 +221,7 @@ speedwalkingFrame.createSlider = function(name, panel, width, height, orientatio
   currentSlider:Enable();
 end
 
-speedwalkingFrame.createDropDownMenu = function(name, panel, width, height, point, xOffset, yOffset, defaultID)
+speedwalkingFrame.createDropDownMenu = function(name, panel, width, height, point, xOffset, yOffset, defaultID, font)
   speedwalkingFrame.panel.dropdowns[name] = CreateFrame("Button", name, panel, "UIDropDownMenuTemplate");
   local currentDropDown = speedwalkingFrame.panel.dropdowns[name];
   currentDropDown:SetPoint(point, xOffset, yOffset);
@@ -234,7 +234,7 @@ speedwalkingFrame.createDropDownMenu = function(name, panel, width, height, poin
   local function OnClick(self)
     UIDropDownMenu_SetSelectedID(currentDropDown, self:GetID());
     speedwalkingVars["SpeedwalkingTimerAlign"] = self.value;
-    speedwalkingTimerFrame.font:SetJustifyH(speedwalkingVars["SpeedwalkingTimerAlign"]);
+    font:SetJustifyH(speedwalkingVars["SpeedwalkingTimerAlign"]);
     -- Click Needs To Set Position
     -- Then Save To Account Variable
     -- Then Realign
@@ -259,11 +259,36 @@ speedwalkingFrame.createDropDownMenu = function(name, panel, width, height, poin
   UIDropDownMenu_SetButtonWidth(currentDropDown, width + 25);
 end
 
-speedwalkingFrame.createSlider("SpeedwalkingTimerXOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 5, -200, -100, 100, "xOffset", 0, 1, "FRAME");
-speedwalkingFrame.createSlider("SpeedwalkingTimerYOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 205, -200, -100, 100, "yOffset", 0, 1, "FRAME");
-speedwalkingFrame.createSlider("SpeedwalkingTimerFontSizeSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 405, -200, 10, 32, "Font Size", 29, 1, "FONT");
+speedwalkingFrame.createSlider("SpeedwalkingTimerXOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 5, -140, -100, 100, "xOffset", 0, 1, "FRAME", speedwalkingTimerFrame, "Timer");
+speedwalkingFrame.createSlider("SpeedwalkingTimerYOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 205, -140, -100, 100, "yOffset", 0, 1, "FRAME", speedwalkingTimerFrame, "Timer");
+speedwalkingFrame.createSlider("SpeedwalkingTimerFontSizeSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 405, -140, 10, 32, "Font Size", 29, 1, "FONT", speedwalkingTimerFrame);
 
-speedwalkingFrame.createDropDownMenu("SpeedwalkingTimerAlign", speedwalkingFrame.panel, 100, 50, "TOPLEFT", -10, -125, 2);
+speedwalkingFrame.createDropDownMenu("SpeedwalkingTimerAlign", speedwalkingFrame.panel, 100, 50, "TOPLEFT", -15, -180, 2, speedwalkingTimerFrame.font);
+
+speedwalkingFrame.panel.timerHeader = speedwalkingFrame.panel:CreateFontString(nil, "ARTWORK");
+local currentHeader = speedwalkingFrame.panel.timerHeader;
+currentHeader:SetFontObject(GameFontNormalLarge);
+currentHeader:SetJustifyH("LEFT");
+currentHeader:SetJustifyV("TOP");
+currentHeader:ClearAllPoints();
+currentHeader:SetPoint("TOPLEFT", 5, -100);
+currentHeader:SetText("Timer Options");
+
+speedwalkingFrame.createSlider("SpeedwalkingObjectiveXOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 5, -260, -100, 100, "xOffset", 0, 1, "FRAME", sspeedwalkingObjectiveFrame, "Objective");
+speedwalkingFrame.createSlider("SpeedwalkingObjectiveYOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 205, -260, -100, 100, "yOffset", -40, 1, "FRAME", speedwalkingObjectiveFrame, "Objective");
+speedwalkingFrame.createSlider("SpeedwalkingObjectiveFontSizeSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 405, -260, 10, 32, "Font Size", 29, 1, "FONT", speedwalkingObjectiveFrame);
+
+speedwalkingFrame.createDropDownMenu("SpeedwalkingObjectiveAlign", speedwalkingFrame.panel, 100, 50, "TOPLEFT", -15, -300, 1, speedwalkingObjectiveFrame.font);
+
+speedwalkingFrame.panel.objectiveHeader = speedwalkingFrame.panel:CreateFontString(nil, "ARTWORK");
+local currentHeader = speedwalkingFrame.panel.objectiveHeader;
+currentHeader:SetFontObject(GameFontNormalLarge);
+currentHeader:SetJustifyH("LEFT");
+currentHeader:SetJustifyV("TOP");
+currentHeader:ClearAllPoints();
+currentHeader:SetPoint("TOPLEFT", 5, -220);
+currentHeader:SetText("Objective Options");
+
 
 InterfaceOptions_AddCategory(speedwalkingFrame.panel);
 InterfaceOptions_AddCategory(speedwalkingFrame.cmPanel);
