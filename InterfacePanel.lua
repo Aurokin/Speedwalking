@@ -183,7 +183,7 @@ speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetC
 speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetScript("OnClick", function(self) speedwalkingFrame.toggleCompetitive() end);
 
 -- Sliders
-speedwalkingFrame.createSlider = function(name, panel, width, height, orientation, point, xOffset, yOffset, min, max, text, defaultValue, step)
+speedwalkingFrame.createSlider = function(name, panel, width, height, orientation, point, xOffset, yOffset, min, max, text, defaultValue, step, type)
   speedwalkingFrame.panel.sliders[name] = CreateFrame("Slider", name, panel, "OptionsSliderTemplate");
   local currentSlider = speedwalkingFrame.panel.sliders[name];
   currentSlider.labelText = text;
@@ -199,20 +199,30 @@ speedwalkingFrame.createSlider = function(name, panel, width, height, orientatio
   currentSlider:SetValue(defaultValue);
   currentSlider:SetValueStep(step);
 
-  currentSlider:SetScript("OnValueChanged", function(self, value)
-    self:SetValue(value)
-    _G[self:GetName()  .. 'Text']:SetText(self.labelText .. " : " .. self:GetValue());
-    speedwalkingVars[string.gsub(self:GetName(), "Slider", "")] = self:GetValue();
-    speedwalkingTimerFrame:ClearAllPoints();
-    speedwalkingTimerFrame:SetPoint(speedwalkingVars["SpeedwalkingTimerPoint"], speedwalkingVars["SpeedwalkingTimerXOffset"], speedwalkingVars["SpeedwalkingTimerYOffset"]);
-  end);
+  if (type == "FRAME") then
+    currentSlider:SetScript("OnValueChanged", function(self, value)
+      self:SetValue(value)
+      _G[self:GetName()  .. 'Text']:SetText(self.labelText .. " : " .. self:GetValue());
+      speedwalkingVars[string.gsub(self:GetName(), "Slider", "")] = self:GetValue();
+      speedwalkingTimerFrame:ClearAllPoints();
+      speedwalkingTimerFrame:SetPoint(speedwalkingVars["SpeedwalkingTimerPoint"], speedwalkingVars["SpeedwalkingTimerXOffset"], speedwalkingVars["SpeedwalkingTimerYOffset"]);
+    end);
+  elseif (type == "FONT") then
+    currentSlider:SetScript("OnValueChanged", function(self, value)
+      self:SetValue(value)
+      _G[self:GetName()  .. 'Text']:SetText(self.labelText .. " : " .. self:GetValue());
+      speedwalkingVars[string.gsub(self:GetName(), "Slider", "")] = self:GetValue();
+      speedwalkingTimerFrame.font:SetFont("Interface\\Addons\\Speedwalking\\MyriadCondensedWeb.ttf", speedwalkingVars[string.gsub(self:GetName(), "Slider", "")], "OUTLINE");
+    end);
+  end
 
   currentSlider:Show();
   currentSlider:Enable();
 end
 
-speedwalkingFrame.createSlider("SpeedwalkingTimerXOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 5, -200, -100, 100, "xOffset", 0, 1);
-speedwalkingFrame.createSlider("SpeedwalkingTimerYOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 155, -200, -100, 100, "yOffset", 0, 1);
+speedwalkingFrame.createSlider("SpeedwalkingTimerXOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 5, -200, -100, 100, "xOffset", 0, 1, "FRAME");
+speedwalkingFrame.createSlider("SpeedwalkingTimerYOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 205, -200, -100, 100, "yOffset", 0, 1, "FRAME");
+speedwalkingFrame.createSlider("SpeedwalkingTimerFontSizeSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 405, -200, 10, 32, "Font Size", 29, 1, "FONT");
 
 InterfaceOptions_AddCategory(speedwalkingFrame.panel);
 InterfaceOptions_AddCategory(speedwalkingFrame.cmPanel);
