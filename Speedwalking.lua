@@ -406,6 +406,13 @@ speedwalkingFrame.toggleCMAutoInvite = function()
   speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoInviteButton"]:SetChecked(speedwalkingFrame.quickInviteEnabled);
 end
 
+speedwalkingFrame.setupSlider = function(name)
+  local value = speedwalkingVars[name] or 0;
+  local currentSlider = speedwalkingFrame.panel.sliders[name .. "Slider"];
+  currentSlider:SetValue(value);
+  _G[currentSlider:GetName()  .. 'Text']:SetText(currentSlider.labelText .. " : " .. currentSlider:GetValue());
+end
+
 speedwalkingFrame.setupAddonPanel = function()
   speedwalkingFrame.panel.buttons["SpeedwalkingTrueTimerButton"]:SetChecked(speedwalkingFrame.trueTimer);
   speedwalkingFrame.timewalkingPanel.buttons["SpeedwalkingCompetitiveButton"]:SetChecked(speedwalkingFrame.competitive);
@@ -416,14 +423,11 @@ speedwalkingFrame.setupAddonPanel = function()
   speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoLeaveButton"]:SetChecked(speedwalkingFrame.quickLeaveEnabled);
   speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoKickButton"]:SetChecked(speedwalkingFrame.quickKickEnabled);
   speedwalkingFrame.cmPanel.buttons["SpeedwalkingCMAutoInviteButton"]:SetChecked(speedwalkingFrame.quickInviteEnabled);
+  speedwalkingFrame.setupSlider("SpeedwalkingTimerXOffset");
+  speedwalkingFrame.setupSlider("SpeedwalkingTimerYOffset");
 
-  -- local name = "SpeedwalkingTimerXOffset";
-  -- local value = speedwalkingVars[name] or 0;
-  -- local currentSlider = speedwalkingFrame.panel.sliders[name .. "Slider"];
-  -- currentSlider:SetValue(value);
-  -- _G[currentSlider:GetName()  .. 'Text']:SetText(currentSlider.labelText .. " : " .. currentSlider:GetValue());
-  -- speedwalkingTimerFrame.font:ClearAllPoints();
-  -- speedwalkingTimerFrame.font:SetPoint("BOTTOM", speedwalkingVars["SpeedwalkingTimerXOffset"], speedwalkingVars["SpeedwalkingTimerYOffset"]);
+  speedwalkingTimerFrame:ClearAllPoints();
+  speedwalkingTimerFrame:SetPoint(speedwalkingVars["SpeedwalkingTimerPoint"], speedwalkingVars["SpeedwalkingTimerXOffset"], speedwalkingVars["SpeedwalkingTimerYOffset"]);
 end
 
 speedwalkingFrame.enableTW = function()
@@ -520,6 +524,7 @@ local function eventHandler(self, event, ...)
       speedwalkingVars["yOffset"] = 0;
       speedwalkingVars["SpeedwalkingTimerXOffset"] = 0;
       speedwalkingVars["SpeedwalkingTimerYOffset"] = 0;
+      speedwalkingVars["SpeedwalkingTimerPoint"] = "TOP";
       speedwalkingVars["trueTimer"] = true;
       speedwalkingVars["competitive"] = false;
       speedwalkingVars["goldTimer"] = true;
@@ -542,6 +547,7 @@ local function eventHandler(self, event, ...)
     speedwalkingFrame.quickLeaveEnabled = speedwalkingVars["quickLeave"] or false;
     speedwalkingFrame.quickKickEnabled = speedwalkingVars["quickKick"] or false;
     speedwalkingFrame.quickInviteEnabled = speedwalkingVars["quickInvite"] or false;
+    speedwalkingVars["SpeedwalkingTimerPoint"] = "TOP";
     speedwalkingFrame.setupAddonPanel();
     -- print(speedwalkingVars["anchor"] .. " " .. speedwalkingVars["xOffset"] .. " " .. speedwalkingVars["yOffset"]);
     -- speedwalkingFrame.hideFrames();

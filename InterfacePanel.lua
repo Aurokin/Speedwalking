@@ -203,14 +203,16 @@ speedwalkingFrame.createSlider = function(name, panel, width, height, orientatio
     self:SetValue(value)
     _G[self:GetName()  .. 'Text']:SetText(self.labelText .. " : " .. self:GetValue());
     speedwalkingVars[string.gsub(self:GetName(), "Slider", "")] = self:GetValue();
+    speedwalkingTimerFrame:ClearAllPoints();
+    speedwalkingTimerFrame:SetPoint(speedwalkingVars["SpeedwalkingTimerPoint"], speedwalkingVars["SpeedwalkingTimerXOffset"], speedwalkingVars["SpeedwalkingTimerYOffset"]);
   end);
 
   currentSlider:Show();
   currentSlider:Enable();
 end
 
--- speedwalkingFrame.createSlider("SpeedwalkingTimerXOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 5, -200, -100, 100, "xOffset", 0, 1);
--- speedwalkingFrame.createSlider("SpeedwalkingTimerYOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 155, -200, -100, 100, "yOffset", 0, 1);
+speedwalkingFrame.createSlider("SpeedwalkingTimerXOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 5, -200, -100, 100, "xOffset", 0, 1);
+speedwalkingFrame.createSlider("SpeedwalkingTimerYOffsetSlider", speedwalkingFrame.panel, 100, 20, "HORIZONTAL", "TOPLEFT", 155, -200, -100, 100, "yOffset", 0, 1);
 
 InterfaceOptions_AddCategory(speedwalkingFrame.panel);
 InterfaceOptions_AddCategory(speedwalkingFrame.cmPanel);
