@@ -196,7 +196,7 @@ speedwalkingFrame.createSlider = function(name, panel, width, height, orientatio
   _G[currentSlider:GetName()  .. 'High']:SetText(max);
   _G[currentSlider:GetName()  .. 'Text']:SetText(text .. " : 0");
   currentSlider:SetMinMaxValues(min, max);
-  -- currentSlider:SetValue(defaultValue);
+  currentSlider:SetValue(defaultValue);
   currentSlider:SetValueStep(step);
 
   currentSlider:SetScript("OnValueChanged", function(self, value)
