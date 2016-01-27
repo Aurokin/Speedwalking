@@ -3,6 +3,12 @@ speedwalkingFrame = CreateFrame("Frame", "SpeedwalkingFrame", UIParent);
 speedwalkingTimerFrame = CreateFrame("Frame", "SpeedwalkingTimerFrame", speedwalkingFrame);
 speedwalkingObjectiveFrame = CreateFrame("Frame", "speedwalkingObjectiveFrame", speedwalkingFrame);
 
+speedwalkingFrame.debugPrint = function(string)
+  if (true and string) then
+    print(string);
+  end
+end
+
 speedwalkingFrame.secondsToTime = function(seconds)
   local min = math.floor(seconds/60);
   local sec = seconds - (min * 60);
@@ -276,6 +282,12 @@ speedwalkingFrame.updateInfo = function()
     local currentZoneID = speedwalkingFrame.currentTW["zoneID"];
     if (not startTime and speedwalkingFrame.inTW == true) then
       speedwalkingFrame.checkPositions(currentZoneID);
+      -- SSD Fix
+      if (speedwalkingFrame.currentTW["steps"] == 0) then
+        local _, _, steps = C_Scenario.GetStepInfo();
+        speedwalkingFrame.debugPrint("Steps Were 0, No Start Time!");
+        -- speedwalkingFrame.fillTables(steps);
+      end
     end
     -- Timer Text
     local timerText = speedwalkingFrame.speedwalkingTimerText(currentZoneID);
@@ -448,9 +460,13 @@ speedwalkingFrame.enableTW = function()
   local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
   -- Difficulty 1 is Normal, 2 is Heroic, 8 is CM, 24 is Timewalker
   if (speedwalkingDungeonInfo[currentZoneID] and difficulty == speedwalkingFrame.twDifficulty) then
+    speedwalkingFrame.debugPrint("Enabling TW");
     speedwalkingFrame.wipeTables();
+    speedwalkingFrame.debugPrint("Wiped Tables");
     speedwalkingFrame.setupTW(currentZoneID);
+    speedwalkingFrame.debugPrint("Calling Setup TW");
     speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
+    speedwalkingFrame.debugPrint("Late Start: " .. tostring(speedwalkingFrame.currentTW["lateStart"]));
     speedwalkingFrame.waitingForKillcount=false;
     if speedwalkingFrame.currentTW["lateStart"] then
       speedwalkingFrame.waitingForKillcount=true;
@@ -458,9 +474,11 @@ speedwalkingFrame.enableTW = function()
     end
     -- Late Starts Don't Need An Update
     -- speedwalkingFrame.currentTW["firstUpdate"] = speedwalkingFrame.currentTW["lateStart"];
+    speedwalkingFrame.debugPrint("Showing Frames");
     speedwalkingFrame.showFrames();
     speedwalkingFrame.inTW = true;
     speedwalkingFrame.inCM = false;
+    speedwalkingFrame.debugPrint("Updating Info!");
     speedwalkingFrame.updateInfo();
   end
   speedwalkingFrame.resyncTable={};
@@ -613,12 +631,16 @@ local function eventHandler(self, event, ...)
         end
       end
     end
-  elseif event == "PLAYER_ENTERING_WORLD" then
+  elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
     local name, _, difficulty, difficultyName, _, _, _, currentZoneID = GetInstanceInfo();
+    speedwalkingFrame.debugPrint("Loading Event! - " .. event);
     if (speedwalkingDungeonInfo and currentZoneID) then
+      speedwalkingFrame.debugPrint("Detected Zone ID!");
       if (speedwalkingDungeonInfo[currentZoneID] and difficulty == speedwalkingFrame.twDifficulty and speedwalkingFrame.timewalking == true) then
+        speedwalkingFrame.debugPrint("Loading TW");
         speedwalkingFrame.enableTW();
       elseif (speedwalkingDungeonInfo[currentZoneID] and difficulty == 8 and speedwalkingFrame.cms == true) then
+        speedwalkingFrame.debugPrint("Loading CM!");
         speedwalkingFrame.setupCM();
       else
         speedwalkingFrame.inTW = false;
@@ -628,8 +650,11 @@ local function eventHandler(self, event, ...)
     end
   elseif event == "SCENARIO_POI_UPDATE" and speedwalkingFrame.inTW == true and speedwalkingFrame.currentTW and speedwalkingFrame.currentTW["firstUpdate"] == false then
     local _, _, steps = C_Scenario.GetStepInfo();
+    speedwalkingFrame.debugPrint("POI Update");
+    speedwalkingFrame.debugPrint("Steps = " .. steps);
     speedwalkingFrame.currentTW["steps"] = steps;
     speedwalkingFrame.fillTables(steps);
+    speedwalkingFrame.debugPrint("Tables Filled!" .. steps);
     speedwalkingFrame.currentTW["lateStart"] = speedwalkingFrame.currentTW["lateStart"] or speedwalkingFrame.inProgressScan(currentZoneID);
     speedwalkingFrame.currentTW["firstUpdate"] = true;
   elseif event == "CHALLENGE_MODE_START" and speedwalkingFrame.cms == true and speedwalkingFrame.inCM == true then
@@ -668,7 +693,7 @@ local function eventHandler(self, event, ...)
       end
 
     end
-    if groupDifferenceCount == 1 and speedwalkingFrame.quickInviteEnabled then
+    if groupDifferenceCount == 1 and speedwalkingFrame.quickInviteEnabled and speedwalkingFrame.inCM == true then
       if #speedwalkingFrame.groupHistory == 1 then
         if GetUnitName("player").."-"..GetRealmName()<toonToInvite then
           InviteUnit(toonToInvite);
@@ -677,7 +702,7 @@ local function eventHandler(self, event, ...)
         InviteUnit(toonToInvite);
       end
     end
-    speedwalkingFrame.groupHistory=newHistory;
+    speedwalkingFrame.groupHistory = newHistory;
   elseif event == "UNIT_ENTERED_VEHICLE" then
     if CanExitVehicle() and speedwalkingFrame.quickLeaveEnabled then
       VehicleExit();
@@ -694,7 +719,7 @@ end
 
 -- Global Variables (Most likely saved later)
 speedwalkingFrame.inTW = false;
-speedwalkingFrame.inCM = true;
+speedwalkingFrame.inCM = false;
 speedwalkingFrame.successColor = "000ff000";
 speedwalkingFrame.trueTimer = true;
 speedwalkingFrame.goldTimer = true;
@@ -741,6 +766,7 @@ speedwalkingFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
 speedwalkingFrame:RegisterEvent("UNIT_ENTERED_VEHICLE");
 speedwalkingFrame:RegisterEvent("VEHICLE_PASSENGERS_CHANGED");
 speedwalkingFrame:RegisterEvent("VEHICLE_UPDATE");
+speedwalkingFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 
 -- Set Frame Height/Width
 speedwalkingFrame:SetHeight(340);
