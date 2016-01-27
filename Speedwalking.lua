@@ -649,7 +649,7 @@ local function eventHandler(self, event, ...)
     if speedwalkingFrame.currentTW["enemies"] < speedwalkingFrame.currentTW["totalEnemies"] then
       local encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName = ...;
       if ((msg == "UNIT_DIED" or msg == "PARTY_KILL") and speedwalkingDungeonInfo[speedwalkingFrame.currentTW["zoneID"]]["mobs"][split(destGUID,"\-")[6]] and not speedwalkingFrame.currentTW["enemyList"][destGUID]) then
-        print(destGUID .. " - " .. destName);
+        -- print(destGUID .. " - " .. destName);
         speedwalkingFrame.addMobToList(destGUID);
         speedwalkingFrame.sendMob(destGUID);
       end
@@ -703,7 +703,7 @@ speedwalkingFrame.timewalking = true;
 speedwalkingFrame.cms = false;
 speedwalkingFrame.unlocked = false;
 speedwalkingFrame.minWidth = 200;
-speedwalkingFrame.twDifficulty = 1;
+speedwalkingFrame.twDifficulty = 24;
 speedwalkingFrame.prefix = "SPEEDWALKING";
 speedwalkingFrame.resyncTable = {};
 speedwalkingFrame.waitingForKillcount=false;
@@ -832,6 +832,16 @@ local function handler(msg, editbox)
     speedwalkingFrame:ClearAllPoints();
     speedwalkingFrame:SetPoint("RIGHT", 0, 0);
     print("Speedwalking - Frame Position Reset");
+  elseif (msg == "debug") then
+    local string = "";
+    if (speedwalkingFrame.twDifficulty == 24) then
+      speedwalkingFrame.twDifficulty = 1;
+      string = "Difficulty Set To Normal";
+    else
+      speedwalkingFrame.twDifficulty = 24;
+      string = "Difficulty Set To Timewalking";
+    end
+    print(string);
   else
     print("Speedwalking - For Your Go Fast Timewalking Needs");
     print("Reset Frame Position - /sw reset");
