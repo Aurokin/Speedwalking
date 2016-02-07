@@ -9,7 +9,7 @@ Small Features
 - ~~Auto Invite After Leaving Group~~  
 - Blademaster SMBG Fix  
 - ~~Font Size Option~~  
-- ~~Font Alignment Option  
+- ~~Font Alignment Option~~  
 - ~~Font Offest Customization~~  
 
 Medium Features  
