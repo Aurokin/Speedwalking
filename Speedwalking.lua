@@ -704,14 +704,14 @@ local function eventHandler(self, event, ...)
     end
     speedwalkingFrame.groupHistory = newHistory;
   elseif event == "UNIT_ENTERED_VEHICLE" then
-    if CanExitVehicle() and speedwalkingFrame.quickLeaveEnabled then
+    if CanExitVehicle() and speedwalkingFrame.quickLeaveEnabled and speedwalkingFrame.inCM == true then
       VehicleExit();
     end
   elseif event == "VEHICLE_PASSENGERS_CHANGED" or event == "VEHICLE_UPDATE" then
-    if CanEjectPassengerFromSeat(1) and speedwalkingFrame.quickKickEnabled then
+    if CanEjectPassengerFromSeat(1) and speedwalkingFrame.quickKickEnabled and speedwalkingFrame.inCM == true then
       EjectPassengerFromSeat(1)
     end
-    if CanEjectPassengerFromSeat(2) and speedwalkingFrame.quickKickEnabled then
+    if CanEjectPassengerFromSeat(2) and speedwalkingFrame.quickKickEnabled and speedwalkingFrame.inCM == true then
       EjectPassengerFromSeat(2)
     end
   end
