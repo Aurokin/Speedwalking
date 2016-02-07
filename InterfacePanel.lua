@@ -274,7 +274,7 @@ currentHeader:ClearAllPoints();
 currentHeader:SetPoint("TOPLEFT", 5, -100);
 currentHeader:SetText("Timer Options");
 
-speedwalkingFrame.createSlider("SpeedwalkingObjectiveXOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 5, -260, -100, 100, "xOffset", 0, 1, "FRAME", sspeedwalkingObjectiveFrame, "Objective");
+speedwalkingFrame.createSlider("SpeedwalkingObjectiveXOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 5, -260, -100, 100, "xOffset", 0, 1, "FRAME", speedwalkingObjectiveFrame, "Objective");
 speedwalkingFrame.createSlider("SpeedwalkingObjectiveYOffsetSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 205, -260, -100, 100, "yOffset", -40, 1, "FRAME", speedwalkingObjectiveFrame, "Objective");
 speedwalkingFrame.createSlider("SpeedwalkingObjectiveFontSizeSlider", speedwalkingFrame.panel, 175, 20, "HORIZONTAL", "TOPLEFT", 405, -260, 10, 32, "Font Size", 29, 1, "FONT", speedwalkingObjectiveFrame);
 

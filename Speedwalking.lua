@@ -4,7 +4,7 @@ speedwalkingTimerFrame = CreateFrame("Frame", "SpeedwalkingTimerFrame", speedwal
 speedwalkingObjectiveFrame = CreateFrame("Frame", "speedwalkingObjectiveFrame", speedwalkingFrame);
 
 speedwalkingFrame.debugPrint = function(string)
-  if (true and string) then
+  if (false and string) then
     print(string);
   end
 end
