@@ -1,4 +1,5 @@
 speedwalkingDungeonInfo = {};
+local mapID;
 -- Cataclysm Dungeons
 speedwalkingDungeonInfo[670] = {};
 speedwalkingDungeonInfo[670]["name"] = "Grim Batol";
@@ -179,6 +180,79 @@ speedwalkingDungeonInfo[725]["startingArea"] = {};
 speedwalkingDungeonInfo[725]["startingArea"]["x"] = 851.10003662109;
 speedwalkingDungeonInfo[725]["startingArea"]["y"] = 986.5;
 speedwalkingDungeonInfo[725]["startingArea"]["safeZone"] = 20;
+
+-- Burning Crusade Dungeons
+speedwalkingDungeonInfo[585] = {};
+speedwalkingDungeonInfo[585]["name"] = "Magisters' Terrace";
+speedwalkingDungeonInfo[585]["enemies"] = 99;
+speedwalkingDungeonInfo[585]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[585]["mobs"] = {
+
+};
+speedwalkingDungeonInfo[585]["startingArea"] = {};
+speedwalkingDungeonInfo[585]["startingArea"]["x"] = 10.2;
+speedwalkingDungeonInfo[585]["startingArea"]["y"] = 0.4;
+speedwalkingDungeonInfo[585]["startingArea"]["safeZone"] = 20;
+
+speedwalkingDungeonInfo[557] = {};
+speedwalkingDungeonInfo[557]["name"] = "Mana-Tombs";
+speedwalkingDungeonInfo[557]["enemies"] = 99;
+speedwalkingDungeonInfo[557]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[557]["mobs"] = {
+
+};
+speedwalkingDungeonInfo[557]["startingArea"] = {};
+speedwalkingDungeonInfo[557]["startingArea"]["x"] = -4.8;
+speedwalkingDungeonInfo[557]["startingArea"]["y"] = 1;
+speedwalkingDungeonInfo[557]["startingArea"]["safeZone"] = 20;
+
+speedwalkingDungeonInfo[552] = {};
+speedwalkingDungeonInfo[552]["name"] = "The Arcatraz";
+speedwalkingDungeonInfo[552]["enemies"] = 99;
+speedwalkingDungeonInfo[552]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[552]["mobs"] = {
+
+};
+speedwalkingDungeonInfo[552]["startingArea"] = {};
+speedwalkingDungeonInfo[552]["startingArea"]["x"] = 8.6;
+speedwalkingDungeonInfo[552]["startingArea"]["y"] = 0;
+speedwalkingDungeonInfo[552]["startingArea"]["safeZone"] = 20;
+
+speedwalkingDungeonInfo[269] = {};
+speedwalkingDungeonInfo[269]["name"] = "The Black Morass";
+speedwalkingDungeonInfo[269]["enemies"] = 99;
+speedwalkingDungeonInfo[269]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[269]["mobs"] = {
+
+};
+speedwalkingDungeonInfo[269]["startingArea"] = {};
+speedwalkingDungeonInfo[269]["startingArea"]["x"] = -1490.1;
+speedwalkingDungeonInfo[269]["startingArea"]["y"] = 7053.7;
+speedwalkingDungeonInfo[269]["startingArea"]["safeZone"] = 20;
+
+speedwalkingDungeonInfo[540] = {};
+speedwalkingDungeonInfo[540]["name"] = "The Shattered Halls";
+speedwalkingDungeonInfo[540]["enemies"] = 99;
+speedwalkingDungeonInfo[540]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[540]["mobs"] = {
+
+};
+speedwalkingDungeonInfo[540]["startingArea"] = {};
+speedwalkingDungeonInfo[540]["startingArea"]["x"] = -40.7;
+speedwalkingDungeonInfo[540]["startingArea"]["y"] = -19.3;
+speedwalkingDungeonInfo[540]["startingArea"]["safeZone"] = 20;
+
+speedwalkingDungeonInfo[547] = {};
+speedwalkingDungeonInfo[547]["name"] = "The Shattered Halls";
+speedwalkingDungeonInfo[547]["enemies"] = 99;
+speedwalkingDungeonInfo[547]["goldTimer"] = 1200;
+speedwalkingDungeonInfo[547]["mobs"] = {
+
+};
+speedwalkingDungeonInfo[547]["startingArea"] = {};
+speedwalkingDungeonInfo[547]["startingArea"]["x"] = 122.4;
+speedwalkingDungeonInfo[547]["startingArea"]["y"] = -123.6;
+speedwalkingDungeonInfo[547]["startingArea"]["safeZone"] = 20;
 
 -- WoD CMs
 speedwalkingDungeonInfo[1195] = {};
