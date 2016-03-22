@@ -778,8 +778,6 @@ speedwalkingTimerFrame:SetPoint("TOP", 0, 0);
 speedwalkingObjectiveFrame:SetHeight(300);
 speedwalkingObjectiveFrame:SetWidth(speedwalkingFrame.minWidth);
 speedwalkingObjectiveFrame:SetPoint("TOP", 0, -40);
-speedwalkingFrame:SetMovable(speedwalkingFrame.unlocked);
-speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
 
 speedwalkingFrame:SetScript("OnMouseDown", function(self, button)
   if speedwalkingFrame.unlocked and button == "LeftButton" and not self.isMoving then
@@ -803,6 +801,9 @@ speedwalkingFrame:SetScript("OnHide", function(self)
    self.isMoving = false;
   end
 end);
+
+speedwalkingFrame:SetMovable(speedwalkingFrame.unlocked);
+speedwalkingFrame:EnableMouse(speedwalkingFrame.unlocked);
 
 -- Set Font Settings
 speedwalkingTimerFrame.font:SetAllPoints(true);
