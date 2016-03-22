@@ -600,10 +600,10 @@ local function eventHandler(self, event, ...)
     -- print(prefix);
     if (prefix == speedwalkingFrame.prefix) then
       -- Parse message
-      local msg = split(message, ":");
+      local msg = speedwalkingFrame.split(message, ":");
       if (msg[1] == "Mob") or (msg[1] == "MobTimestamp") then
         if speedwalkingFrame.currentTW then
-          if not speedwalkingFrame.currentTW["enemyList"][msg[2]] and string.format("%d", speedwalkingFrame.currentTW["zoneID"]) == split(msg[2],"\-")[4] then
+          if not speedwalkingFrame.currentTW["enemyList"][msg[2]] and string.format("%d", speedwalkingFrame.currentTW["zoneID"]) == speedwalkingFrame.split(msg[2],"\-")[4] then
             speedwalkingFrame.addMobToList(msg[2]);
             -- print(message);
           end
@@ -673,7 +673,7 @@ local function eventHandler(self, event, ...)
   elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and speedwalkingFrame.inTW == true and speedwalkingFrame.currentTW then
     if speedwalkingFrame.currentTW["enemies"] < speedwalkingFrame.currentTW["totalEnemies"] then
       local encounterID, msg, _, srcGUID, srcName, _, _, destGUID, destName, _, _, spellID, spellName = ...;
-      if ((msg == "UNIT_DIED" or msg == "PARTY_KILL") and speedwalkingDungeonInfo[speedwalkingFrame.currentTW["zoneID"]]["mobs"][split(destGUID,"\-")[6]] and not speedwalkingFrame.currentTW["enemyList"][destGUID]) then
+      if ((msg == "UNIT_DIED" or msg == "PARTY_KILL") and speedwalkingDungeonInfo[speedwalkingFrame.currentTW["zoneID"]]["mobs"][speedwalkingFrame.split(destGUID,"\-")[6]] and not speedwalkingFrame.currentTW["enemyList"][destGUID]) then
         -- print(destGUID .. " - " .. destName);
         speedwalkingFrame.addMobToList(destGUID);
         speedwalkingFrame.sendMob(destGUID);
@@ -878,7 +878,7 @@ local function handler(msg, editbox)
 end
 SlashCmdList["SPEEDWALKING"] = handler;
 
-function split(str, pat)
+speedwalkingFrame.split = function(str, pat)
    local t = {}  -- NOTE: use {n = 0} in Lua-5.0
    local fpat = "(.-)" .. pat
    local last_end = 1
@@ -908,7 +908,7 @@ end
 
 speedwalkingFrame.addIDToTable = function()
     local name = UnitName("target");
-    local guid = split(UnitGUID("target"),"-")[6];
+    local guid = speedwalkingFrame.split(UnitGUID("target"),"-")[6];
     print(name .. ": " .. guid);
     if (not speedwalkingFrame.killCountIDs["count"]) then
       speedwalkingFrame.killCountIDs["count"] = 0;
@@ -918,7 +918,7 @@ speedwalkingFrame.addIDToTable = function()
 end
 speedwalkingFrame.removeIDFromTable = function()
     local name = UnitName("target");
-    local guid = split(UnitGUID("target"),"-")[6];
+    local guid = speedwalkingFrame.split(UnitGUID("target"),"-")[6];
     print("Removed "..name .. ": " .. guid);
     speedwalkingFrame.killCountIDs[guid] = nil;
 end
